@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\UserStatusEnum;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Traits\NumberTrait;
 use Carbon\Carbon;
@@ -129,6 +130,10 @@ class AuthUserService
         $this->request = $request;
         $this->setUserByEmailOrTel();
 
+        if (!$this->model) {
+            return false;
+        }
+
         if (!Hash::check($this->request->password, $this->model->password)) {
             return false;
         }
@@ -143,5 +148,12 @@ class AuthUserService
         $result->access_token = explode('|', $tokenResult)[1];
 
         return $result;
+    }
+
+    public function getMe()
+    {
+        $user = Auth::user();
+
+        return $user;
     }
 }

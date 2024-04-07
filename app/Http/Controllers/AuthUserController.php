@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthUserRegisterRequest;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResendOTPRequest;
 use App\Mail\AuthUserRegisterMail;
 use App\Services\AuthUserService;
@@ -33,6 +34,9 @@ class AuthUserController extends Controller
 
     public function register(AuthUserRegisterRequest $request)
     {
+        if ($request->check) {
+            return $this->responseMessageSuccess('Checked!');
+        }
         $otp = $this->generateOTP();
         $request->verify_otp = Hash::make($otp);
         $request->otp_expired_at = Carbon::now()
@@ -92,10 +96,10 @@ class AuthUserController extends Controller
             return $this->responseMessageSuccess();
         }
 
-        return $this->responseMessageBadrequest('Mã OTP không đúng !');
+        return $this->responseMessageBadrequest('Mã OTP không đúng vui lòng kiểm tra lại !');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $result = $this->authUserService->login($request);
 
@@ -103,6 +107,17 @@ class AuthUserController extends Controller
             return $this->responseDataSuccess($result);
         }
 
-        return $this->responseMessageBadrequest('Username hoặc mật khẩu không đúng !');
+        return $this->responseMessageBadrequest('Tên đăng nhập hoặc mật khẩu không đúng !');
+    }
+
+    public function getMe()
+    {
+        $result = $this->authUserService->getMe();
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
     }
 }

@@ -9,7 +9,7 @@ class AuthUserRegisterRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'full_name' => ['required', 'min:5', 'max:100'],
+            'full_name' => ['required', 'min:5', 'max:50'],
             'email' => [
                 'required',
                 'min:10',

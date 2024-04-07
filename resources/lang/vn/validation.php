@@ -151,6 +151,7 @@ return [
         'user_type' => 'loại tài khoản',
         'password' => 'mật khẩu',
         're_password' => 'mật khẩu xác nhận',
+        'user_identifier' => 'mã đăng nhập',
     ],
 
 ];
