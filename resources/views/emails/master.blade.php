@@ -13,7 +13,7 @@
         </div>
     </div>
     <div
-        style="width: 50%;margin:auto;background: white;border-radius:10px;padding:35px;font-size:16px;font-family:Roboto,Arial;line-height:1.7;"
+        style="max-width:650px;min-width:320px;margin:auto;background: white;border-radius:10px;padding:35px;font-size:16px;font-family:Roboto,Arial;line-height:1.7;"
     >
         @yield('content')
         <div>Chúc bạn có nhiều sức khỏe !</div>

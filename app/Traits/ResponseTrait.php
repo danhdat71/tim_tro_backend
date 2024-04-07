@@ -35,4 +35,12 @@ trait ResponseTrait
             'message' => $message
         ], 400);
     }
+
+    public function responseMessageNotfound($message = 'notfound')
+    {
+        return response()->json([
+            'status' => 404,
+            'message' => $message
+        ], 404);
+    }
 }

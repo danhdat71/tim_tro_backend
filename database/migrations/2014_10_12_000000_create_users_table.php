@@ -40,6 +40,9 @@ return new class extends Migration
                 ->nullable()
                 ->default(0)
                 ->comment('0:inactive, 1:active, 2:leave');
+            $table->dateTime('last_login_at')
+                ->nullable()
+                ->default(null);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'users',
     ],
 
@@ -38,6 +38,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
+            'driver' => 'sanctum',
             'provider' => 'users',
         ],
     ],
@@ -113,5 +118,5 @@ return [
     'password_timeout' => 10800,
 
     'otp_expired' => 15, //minutes
-
+    'login_expired' => 72, //hours, 3 days
 ];
