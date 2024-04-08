@@ -110,6 +110,17 @@ class AuthUserController extends Controller
         return $this->responseMessageBadrequest('Tên đăng nhập hoặc mật khẩu không đúng !');
     }
 
+    public function logout(Request $request)
+    {
+        $result = $this->authUserService->logout($request);
+
+        if ($result) {
+            return $this->responseMessageSuccess();
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
     public function getMe()
     {
         $result = $this->authUserService->getMe();

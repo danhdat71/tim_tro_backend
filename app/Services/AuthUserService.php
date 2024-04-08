@@ -150,6 +150,18 @@ class AuthUserService
         return $result;
     }
 
+    public function setUserByAuth()
+    {
+        $this->model = $this->request->user();
+    }
+
+    public function logout($request)
+    {
+        $this->request = $request;
+        $this->setUserByAuth();
+        return $this->model->currentAccessToken()->delete();
+    }
+
     public function getMe()
     {
         $user = Auth::user();
