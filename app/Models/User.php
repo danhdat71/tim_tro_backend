@@ -29,6 +29,7 @@ class User extends Authenticatable
         'birthday',
         'description',
         'last_login_at',
+        'remember_token',
     ];
 
     /**

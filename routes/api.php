@@ -27,6 +27,9 @@ Route::post('auth/register', [AuthUserController::class, 'register']);
 Route::post('auth/resend-otp', [AuthUserController::class, 'resendOTP'])
     ->middleware(SendOTPMiddleware::class);
 Route::post('auth/verify-otp', [AuthUserController::class, 'verifyOTP']);
+Route::post('auth/forgot-password', [AuthUserController::class, 'forgotPassword']);
+Route::post('auth/verify-otp-change-password', [AuthUserController::class, 'verifyOTPChangePassword']);
+Route::post('auth/change-password', [AuthUserController::class, 'changePassword']);
 
 Route::group([
     'prefix' => '',

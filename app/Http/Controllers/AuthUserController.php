@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthUserForgotPasswordRequest;
 use App\Http\Requests\AuthUserRegisterRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResendOTPRequest;
 use App\Mail\AuthUserRegisterMail;
+use App\Mail\AuthUserResetPasswordMail;
 use App\Services\AuthUserService;
 use App\Services\SendMailService;
 use App\Services\UserService;
@@ -97,6 +100,57 @@ class AuthUserController extends Controller
         }
 
         return $this->responseMessageBadrequest('Mã OTP không đúng vui lòng kiểm tra lại !');
+    }
+
+    public function forgotPassword(AuthUserForgotPasswordRequest $request)
+    {
+        $user = $this->userService->getUser($request->user_identifier);
+        if (!$user) {
+            return $this->responseMessageNotfound('user_not_found');
+        }
+
+        $otp = $this->generateOTP();
+        $request->verify_otp = Hash::make($otp);
+        $request->otp_expired_at = Carbon::now()
+            ->addMinutes(config('auth.otp_expired'))
+            ->toDateTimeString();
+
+        $this->sendMailService->sendMail(
+            $user->email,
+            AuthUserResetPasswordMail::class,
+            $user->full_name,
+            $otp
+        );
+
+        $result = $this->authUserService->resendOTP($request);
+
+        if ($result) {
+            return $this->responseMessageSuccess();
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function verifyOTPChangePassword(Request $request)
+    {
+        $result = $this->authUserService->verifyOTPChangePassword($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest('Mã OTP không đúng vui lòng kiểm tra lại !');
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $result = $this->authUserService->changePassword($request);
+
+        if ($result) {
+            return $this->responseMessageSuccess();
+        }
+
+        return $this->responseMessageBadrequest();
     }
 
     public function login(LoginRequest $request)
