@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserStatusEnum;
 use App\Http\Requests\AuthUserForgotPasswordRequest;
 use App\Http\Requests\AuthUserRegisterRequest;
 use App\Http\Requests\ChangePasswordRequest;
@@ -155,6 +156,28 @@ class AuthUserController extends Controller
 
     public function login(LoginRequest $request)
     {
+        $user = $this->userService->getUser($request->user_identifier);
+
+        // When user is not verify OTP
+        if ($user && $user->status == UserStatusEnum::INACTIVE->value) {
+            $otp = $this->generateOTP();
+            $request->verify_otp = Hash::make($otp);
+            $request->otp_expired_at = Carbon::now()
+                ->addMinutes(config('auth.otp_expired'))
+                ->toDateTimeString();
+            $this->sendMailService->sendMail(
+                $user->email,
+                AuthUserRegisterMail::class,
+                $user->full_name,
+                $otp
+            );
+            $result = $this->authUserService->resendOTP($request);
+
+            return $this->responseDataSuccess([
+                'status' => UserStatusEnum::INACTIVE,
+            ]);
+        }
+
         $result = $this->authUserService->login($request);
 
         if ($result) {
