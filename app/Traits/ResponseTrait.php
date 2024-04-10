@@ -28,7 +28,7 @@ trait ResponseTrait
         ], 422);
     }
 
-    public function responseMessageBadrequest($message = 'badrequest')
+    public function responseMessageBadrequest($message = 'Có lỗi xảy ra, vui lòng thử lại sau !')
     {
         return response()->json([
             'status' => 400,
@@ -36,7 +36,7 @@ trait ResponseTrait
         ], 400);
     }
 
-    public function responseMessageNotfound($message = 'notfound')
+    public function responseMessageNotfound($message = 'Không tìm thấy !')
     {
         return response()->json([
             'status' => 404,

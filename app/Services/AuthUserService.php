@@ -115,7 +115,7 @@ class AuthUserService
         return $this->fillDataByFields($this->getRegisterFields());
     }
 
-    public function resendOTP($request): User
+    public function resendOTP($request)
     {
         $this->request = $request;
         $this->setUserByEmailOrTel();

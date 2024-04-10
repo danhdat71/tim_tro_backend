@@ -123,6 +123,14 @@ return [
             'path' => storage_path('logs/send_mail_'. date('Y_m_d'). '.log'),
             'level' => 'debug',
         ],
+
+        'cron' => [
+            'clean_cancel_forgot_password' => [
+                'driver' => 'single',
+                'path' => storage_path('logs/cron/clean_cancel_forgot_password_'. date('Y_m_d'). '.log'),
+                'level' => 'debug',
+            ]
+        ],
     ],
 
 ];
