@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
@@ -31,5 +34,33 @@ class UserService
         $this->setUserByAuth();
 
         return $this->model;
+    }
+
+    public function updateUserAvatar($request)
+    {
+        $this->request = $request;
+        $this->setUserByAuth();
+
+        $avatarFolder = 'user_id_' . $this->model->id;
+        $avatarFileName = 'avatar_' . date('ymdhis') . '.jpg';
+        $userAvatarPath = "assets/imgs/$avatarFolder/";
+        $avatarFullPath = $userAvatarPath . $avatarFileName;
+
+        if (!Storage::disk('public_path')->exists($userAvatarPath)) {
+            Storage::disk('public_path')->makeDirectory($userAvatarPath);
+        }
+
+        $file = $this->request->file('avatar');
+        $img = Image::make($file);
+        $img->fit(config('image.user_avatar.width'), config('image.user_avatar.height'));
+        $img->save($avatarFullPath, config('user_avatar.quality'));
+
+        // Update data
+        $this->model->avatar = $avatarFullPath;
+        $this->model->save();
+
+        return [
+            'avatar' => $avatarFullPath,
+        ];
     }
 }

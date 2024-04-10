@@ -55,7 +55,7 @@ return [
         'string' => 'The :attribute must be greater than or equal :value characters.',
         'array' => 'The :attribute must have :value items or more.',
     ],
-    'image' => 'The :attribute must be an image.',
+    'image' => ':Attribute định dạng là ảnh.',
     'in' => ':Attribute không nằm trong phạm vi cho phép.',
     'in_array' => 'The :attribute field does not exist in :other.',
     'integer' => 'The :attribute must be an integer.',
@@ -81,7 +81,7 @@ return [
         'string' => ':Attribute tối đa :max ký tự.',
         'array' => 'The :attribute may not have more than :max items.',
     ],
-    'mimes' => 'The :attribute must be a file of type: :values.',
+    'mimes' => ':Attribute thuộc dạng định dạng: :values.',
     'mimetypes' => 'The :attribute must be a file of type: :values.',
     'min' => [
         'numeric' => 'The :attribute must be at least :min.',
@@ -152,6 +152,7 @@ return [
         'password' => 'mật khẩu',
         're_password' => 'mật khẩu xác nhận',
         'user_identifier' => 'mã đăng nhập',
+        'avatar' => 'ảnh đại diện',
     ],
 
 ];

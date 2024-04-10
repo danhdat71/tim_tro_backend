@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\ProviderMypageController;
+use App\Http\Controllers\UploadImageController;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
 use Illuminate\Http\Request;
@@ -40,4 +41,5 @@ Route::group([
     Route::post('/auth/logout', [AuthUserController::class, 'logout']);
 
     Route::get('provider/mypage', [ProviderMypageController::class, 'mypage']);
+    Route::post('provider/update-avatar', [ProviderMypageController::class, 'updateAvatar']);
 });
