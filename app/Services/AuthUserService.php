@@ -123,7 +123,7 @@ class AuthUserService
         return $this->fillDataByFields($this->getResendOTPFields());
     }
 
-    public function verifyOTP($request): mixed
+    public function verifyOTP($request)
     {
         $this->request = $request;
         $this->setUserByEmailOrTel();
@@ -142,7 +142,16 @@ class AuthUserService
             return false;
         }
 
-        return $this->fillDataByFields($this->getVerfiryOTPFields());
+        $tokenResult = $this->model->createToken(
+            config('app.name'),
+            ['*'],
+            Carbon::now()->addHours(config('auth.login_expired')),
+        )->plainTextToken;
+
+        $user = $this->fillDataByFields($this->getVerfiryOTPFields());
+        $user->access_token = explode('|', $tokenResult)[1];
+
+        return $user;
     }
 
     public function verifyOTPChangePassword($request): mixed
@@ -192,10 +201,16 @@ class AuthUserService
         $expiredAt = Carbon::parse($expiredAt);
 
         if (Password::tokenExists($this->model, $token) && $now->lt($expiredAt)) {
-            $this->fillDataByFields($this->getChangePasswordFields());
+            $user = $this->fillDataByFields($this->getChangePasswordFields());
             Password::deleteToken($this->model);
+            $tokenResult = $this->model->createToken(
+                config('app.name'),
+                ['*'],
+                Carbon::now()->addHours(config('auth.login_expired')),
+            )->plainTextToken;
+            $user->access_token = explode('|', $tokenResult)[1];
 
-            return true;
+            return $user;
         }
 
         return false;

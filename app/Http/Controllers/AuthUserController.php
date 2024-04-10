@@ -96,7 +96,7 @@ class AuthUserController extends Controller
         $result = $this->authUserService->verifyOTP($request);
 
         if ($result) {
-            return $this->responseMessageSuccess();
+            return $this->responseDataSuccess($result);
         }
 
         return $this->responseMessageBadrequest('Mã OTP không đúng vui lòng kiểm tra lại !');
@@ -147,7 +147,7 @@ class AuthUserController extends Controller
         $result = $this->authUserService->changePassword($request);
 
         if ($result) {
-            return $this->responseMessageSuccess();
+            return $this->responseDataSuccess($result);
         }
 
         return $this->responseMessageBadrequest();
