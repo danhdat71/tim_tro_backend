@@ -11,17 +11,21 @@ use Illuminate\Support\Facades\Auth;
 class UpdateItemInfoRequest extends BaseRequest
 {
     public $user = null;
+    public $request = null;
 
     public function __construct()
     {
         $this->user = Auth::user();
+        $this->request = request();
     }
 
     public function rules(): array
     {
-        return [
-            'app_id' => [
-                'nullable',
+        $rules = [];
+
+        if ($this->request->has('app_id')) {
+            $rules['app_id'] = [
+                'required',
                 'min:5',
                 'max:200',
                 function($attr, $value, $fail) {
@@ -32,10 +36,16 @@ class UpdateItemInfoRequest extends BaseRequest
                         return $fail(__('validation.unique'));
                     }
                 },
-            ],
-            'full_name' => ['nullable', 'min:5', 'max:50'],
-            'tel' => [
-                'nullable',
+            ];
+        }
+
+        if ($this->request->has('full_name')) {
+            $rules['full_name'] = ['required', 'min:5', 'max:50'];
+        }
+
+        if ($this->request->has('tel')) {
+            $rules['tel'] = [
+                'required',
                 'min:10',
                 'max:50',
                 function($attr, $value, $fail) {
@@ -45,12 +55,26 @@ class UpdateItemInfoRequest extends BaseRequest
                         return $fail(__('validation.unique'));
                     }
                 }
-            ],
-            'gender' => ['nullable', 'in:' . implode(',', UserGenderEnum::keyKeys())],
-            'birthday' => ['nullable', 'date_format:Y-m-d'],
-            'description' => ['nullable', 'max:5000'],
-            'password' => ['nullable', 'min:8', 'max:200'],
-            're_password' => ['nullable', 'same:password', 'required_with:password']
-        ];
+            ];
+        }
+
+        if ($this->request->has('gender')) {
+            $rules['gender'] = ['required', 'in:' . implode(',', UserGenderEnum::keyKeys())];
+        }
+
+        if ($this->request->has('birthday')) {
+            $rules['gender'] = ['nullable', 'date_format:Y-m-d'];
+        }
+
+        if ($this->request->has('description')) {
+            $rules['description'] = ['nullable', 'max:5000'];
+        }
+
+        if ($this->request->has('password') || $this->request->has('re_password')) {
+            $rules['password'] = ['required', 'min:8', 'max:200'];
+            $rules['re_password'] = ['required', 'same:password', 'required_with:password'];
+        }
+
+        return $rules;
     }
 }

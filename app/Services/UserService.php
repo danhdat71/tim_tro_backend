@@ -17,7 +17,7 @@ class UserService
     public function fillDataByFields($fiels = [])
     {
         foreach ($fiels as $value) {
-            if ($this->request->has($value)) {
+            if ($this->request->has($value) && $this->request->{$value} != '' && $this->request->{$value} != null) {
                 if ($value == 'app_id') {
                     $this->model->{$value} = Str::slug($this->request->app_id);
                 }
