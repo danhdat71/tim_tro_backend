@@ -33,7 +33,7 @@ return [
     'confirmed' => 'The :attribute confirmation does not match.',
     'date' => 'The :attribute is not a valid date.',
     'date_equals' => 'The :attribute must be a date equal to :date.',
-    'date_format' => 'The :attribute does not match the format :format.',
+    'date_format' => ':Attribute có định dạng :format.',
     'different' => 'The :attribute and :other must be different.',
     'digits' => 'The :attribute must be :digits digits.',
     'digits_between' => 'The :attribute must be between :min and :max digits.',
@@ -97,7 +97,7 @@ return [
     'required' => ':Attribute không được bỏ trống.',
     'required_if' => 'The :attribute field is required when :other is :value.',
     'required_unless' => 'The :attribute field is required unless :other is in :values.',
-    'required_with' => 'The :attribute field is required when :values is present.',
+    'required_with' => ':Attribute không được bỏ trống.',
     'required_with_all' => 'The :attribute field is required when :values are present.',
     'required_without' => 'The :attribute field is required when :values is not present.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
@@ -153,6 +153,10 @@ return [
         're_password' => 'mật khẩu xác nhận',
         'user_identifier' => 'mã đăng nhập',
         'avatar' => 'ảnh đại diện',
+        'app_id' => 'id người dùng',
+        'gender' => 'giới tính',
+        'birthday' => 'ngày sinh',
+        'description' => 'mô tả',
     ],
 
 ];

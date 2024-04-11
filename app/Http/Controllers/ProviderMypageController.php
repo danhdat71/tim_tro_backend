@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Mypage\UpdateAvatarRequest;
+use App\Http\Requests\Mypage\UpdateItemInfoRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
@@ -29,6 +30,17 @@ class ProviderMypageController extends Controller
     public function updateAvatar(UpdateAvatarRequest $request)
     {
         $result = $this->userService->updateUserAvatar($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function updateItemData(UpdateItemInfoRequest $request)
+    {
+        $result = $this->userService->updateUserItemInfo($request);
 
         if ($result) {
             return $this->responseDataSuccess($result);

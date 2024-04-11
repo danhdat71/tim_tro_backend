@@ -42,4 +42,5 @@ Route::group([
 
     Route::get('provider/mypage', [ProviderMypageController::class, 'mypage']);
     Route::post('provider/update-avatar', [ProviderMypageController::class, 'updateAvatar']);
+    Route::post('provider/update-item-info', [ProviderMypageController::class, 'updateItemData']);
 });

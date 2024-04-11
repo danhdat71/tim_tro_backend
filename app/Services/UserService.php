@@ -6,11 +6,46 @@ use App\Models\User;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UserService
 {
     public $model = null;
     public $request = null;
+
+    public function fillDataByFields($fiels = [])
+    {
+        foreach ($fiels as $value) {
+            if ($this->request->has($value)) {
+                if ($value == 'app_id') {
+                    $this->model->{$value} = Str::slug($this->request->app_id);
+                }
+                else if ($value == 'password') {
+                    $this->model->{$value} = Hash::make($this->request->password);
+                }
+                else {
+                    $this->model->{$value} = $this->request->{$value};
+                }
+            }
+        }
+
+        $this->model->save();
+        return $this->model;
+    }
+
+    public function updateUserInfoItemKeys()
+    {
+        return [
+            'password',
+            'app_id',
+            'full_name',
+            'tel',
+            'gender',
+            'birthday',
+            'description',
+        ];
+    }
 
     public function getUser($userIdentifier)
     {
@@ -62,5 +97,13 @@ class UserService
         return [
             'avatar' => $avatarFullPath,
         ];
+    }
+
+    public function updateUserItemInfo($request)
+    {
+        $this->request = $request;
+        $this->setUserByAuth();
+
+        return $this->fillDataByFields($this->updateUserInfoItemKeys());
     }
 }
