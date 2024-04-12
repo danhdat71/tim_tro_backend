@@ -7,6 +7,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class UserService
@@ -17,7 +18,7 @@ class UserService
     public function fillDataByFields($fiels = [])
     {
         foreach ($fiels as $value) {
-            if ($this->request->has($value) && $this->request->{$value} != '' && $this->request->{$value} != null) {
+            if ($this->request->has($value)) {
                 if ($value == 'app_id') {
                     $this->model->{$value} = Str::slug($this->request->app_id);
                 }

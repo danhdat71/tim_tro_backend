@@ -7,6 +7,7 @@ use App\Http\Requests\BaseRequest;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UpdateItemInfoRequest extends BaseRequest
 {
@@ -70,9 +71,22 @@ class UpdateItemInfoRequest extends BaseRequest
             $rules['description'] = ['nullable', 'max:5000'];
         }
 
-        if ($this->request->has('password') || $this->request->has('re_password')) {
+        if (
+            $this->request->has('old_password') ||
+            $this->request->has('password') ||
+            $this->request->has('re_password')
+        ) {
+            $rules['old_password'] = [
+                'required',
+                'max:200',
+                function ($attr, $value, $fail) {
+                    if (!Hash::check($value, $this->user->password)) {
+                        return $fail(__('validation.not_correct'));
+                    }
+                }
+            ];
             $rules['password'] = ['required', 'min:8', 'max:200'];
-            $rules['re_password'] = ['required', 'same:password', 'required_with:password'];
+            $rules['re_password'] = ['required', 'same:password'];
         }
 
         return $rules;

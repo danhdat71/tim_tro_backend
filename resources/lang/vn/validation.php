@@ -115,6 +115,7 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    'not_correct' => ':Attribute không chính xác.',
 
     /*
     |--------------------------------------------------------------------------
@@ -150,6 +151,7 @@ return [
         'tel' => 'số điện thoại',
         'user_type' => 'loại tài khoản',
         'password' => 'mật khẩu',
+        'old_password' => 'mật khẩu cũ',
         're_password' => 'mật khẩu xác nhận',
         'user_identifier' => 'mã đăng nhập',
         'avatar' => 'ảnh đại diện',

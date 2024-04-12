@@ -107,7 +107,7 @@ class AuthUserService
         }
     }
 
-    public function register($request): User
+    public function register($request)
     {
         $this->request = $request;
         $this->model = new User;
@@ -154,7 +154,7 @@ class AuthUserService
         return $user;
     }
 
-    public function verifyOTPChangePassword($request): mixed
+    public function verifyOTPChangePassword($request)
     {
         $this->request = $request;
         $this->setUserByEmailOrTel();
@@ -251,6 +251,15 @@ class AuthUserService
         $this->request = $request;
         $this->setUserByAuth();
         return $this->model->currentAccessToken()->delete();
+    }
+
+    public function logoutOtherDevice($request)
+    {
+        $this->request = $request;
+        $this->setUserByAuth();
+        $currrentAccessToken = $this->model->currentAccessToken();
+
+        return $this->model->tokens()->where('id', '<>', $currrentAccessToken->id)->delete();
     }
 
     public function getMe()

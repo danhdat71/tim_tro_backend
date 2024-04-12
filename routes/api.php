@@ -23,8 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('auth/login', [AuthUserController::class, 'login'])
-    ->middleware(LimitLoginMiddleware::class);
+Route::post('auth/login', [AuthUserController::class, 'login']);
+    #->middleware(LimitLoginMiddleware::class);
 Route::post('auth/register', [AuthUserController::class, 'register']);
 Route::post('auth/resend-otp', [AuthUserController::class, 'resendOTP'])
     ->middleware(SendOTPMiddleware::class);
