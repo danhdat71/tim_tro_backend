@@ -1,19 +1,33 @@
 <?php
 
 namespace App\Http\Requests;
+
 use App\Enums\AllowPetEnum;
 use App\Enums\SharedHouseEnum;
 use App\Enums\TimeRuleEnum;
 use App\Enums\UsedTypeEnum;
 use App\Models\District;
+use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Ward;
 
-class CreateProductRequest extends BaseRequest
+class UpdateProductRequest extends BaseRequest
 {
     public function rules(): array
     {
         $this->request = request();
-        return [
+        $rules = [
+            'product_id' => [
+                'required',
+                'exists:products,id',
+                function($attr, $value, $fail) {
+                    $product = Product::find($this->request->product_id);
+
+                    if ($product && $product->user_id != $this->request->user()->id) {
+                        return $fail(__('validation.exists'));
+                    }
+                }
+            ],
             'province_id' => [
                 'required',
                 'exists:provinces,id',
@@ -54,8 +68,29 @@ class CreateProductRequest extends BaseRequest
             'is_shared_house' => ['required', 'in:' . implode(',', SharedHouseEnum::getKeys())],
             'time_rule' => ['required', 'in:' . implode(',', TimeRuleEnum::getKeys())],
             'is_allow_pet' => ['required', 'in:' . implode(',', AllowPetEnum::getKeys())],
-            'product_images' => ['required'],
-            'product_images.*' => ['image', 'mimes:jpg,jpeg,png', 'max:5000'],
+            'del_product_images' => ['nullable'],
+            'product_images' => [
+                'nullable',
+            ],
+            'product_images.*' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png',
+                'max:5000',
+            ],
         ];
+
+        if ($this->request->product_images == '' || $this->request->has('product_images') == false) {
+            if ($this->request->del_product_images != '' && $this->request->has('del_product_images')) {
+                $productImageNum = ProductImage::where('product_id', $this->request->product_id)->count();
+                $delNum = ProductImage::whereIn('id', explode(',', $this->request->del_product_images))->count();
+
+                if ($delNum >= $productImageNum) {
+                    $rules['product_images'] = ['required'];
+                }
+            }
+        }
+
+        return $rules;
     }
 }

@@ -20,7 +20,7 @@ class ProductService
     {
         foreach ($fiels as $value) {
             if ($value == 'slug') {
-                $this->model->{$value} = Str::slug($this->request->title) . "_" . date('YmdHis');
+                $this->model->{$value} = date('YmdHis') . "-" . Str::slug($this->request->title);
             }
             else if ($value == 'user_id') {
                 $this->model->{$value} = $this->request->user()->id;
@@ -60,6 +60,68 @@ class ProductService
         ];
     }
 
+    public function getUpdateAttributes()
+    {
+        return [
+            'title',
+            'slug',
+            'province_id',
+            'district_id',
+            'ward_id',
+            'price',
+            'description',
+            'tel',
+            'detail_address',
+            'lat',
+            'long',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+            'used_type',
+            'is_shared_house',
+            'time_rule',
+            'is_allow_pet',
+            'user_id',
+        ];
+    }
+
+    public function getSelectProductAttr()
+    {
+        return [
+            'id',
+            'title',
+            'slug',
+            'province_id',
+            'district_id',
+            'ward_id',
+            'price',
+            'description',
+            'tel',
+            'detail_address',
+            'lat',
+            'long',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+            'used_type',
+            'is_shared_house',
+            'time_rule',
+            'is_allow_pet',
+            'user_id',
+            'posted_at',
+        ];
+    }
+
+    public function getSelectProductImagesAttr()
+    {
+        return [
+            'id',
+            'product_id',
+            'url',
+            'thumb_url',
+        ];
+    }
+
     public function storeProductImage($imageFile, $productId)
     {
         $userFolder = 'user_id_' . $this->request->user()->id;
@@ -93,7 +155,7 @@ class ProductService
         $created = $this->fillDataByFields($this->getStoreAttributes());
 
         // Store images
-        if (sizeof($this->request->product_images) > 0) {
+        if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
             foreach ($this->request->product_images as $imageFile) {
                 $this->productImage = new ProductImage;
                 $this->storeProductImage($imageFile, $created->id);
@@ -101,6 +163,49 @@ class ProductService
         }
 
         return $created;
+    }
+
+    public function getDetailById($id)
+    {
+        return Product::where('id', $id)
+            ->select($this->getSelectProductAttr())
+            ->with([
+                'productImages' => function($q) {
+                    $q->select($this->getSelectProductImagesAttr())->get();
+                }
+            ])
+            ->first();
+    }
+
+    public function update($request)
+    {
+        $this->request = $request;
+        $this->model = Product::find($request->product_id);
+
+        //When user delete old images
+        if ($this->request->del_product_images != '') {
+            $oldImagesId = explode(',', $this->request->del_product_images);
+            foreach ($oldImagesId as $oldImageId) {
+                $oldImage = ProductImage::where('id', $oldImageId)
+                    ->where('product_id', $this->model->id)
+                    ->first();
+                if ($oldImage) {
+                    Storage::disk('public_path')
+                        ->delete([$oldImage->url ?? '', $oldImage->thumb_url ?? '']);
+                    $oldImage->delete();
+                }
+            }
+        }
+        // When user upload new images
+        if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
+            foreach ($this->request->product_images as $imageFile) {
+                $this->productImage = new ProductImage;
+                $this->storeProductImage($imageFile, $this->model->id);
+            }
+        }
+
+        $result = $this->fillDataByFields($this->getUpdateAttributes());
+        return $this->getDetailById($result->id);
     }
 
     public function list($request)
@@ -115,12 +220,9 @@ class ProductService
             ])
             ->with([
                 'productImages' => function($q) {
-                    return $q->select([
-                        'id',
-                        'url',
-                        'thumb_url',
-                        'product_id',
-                    ])->orderBy('id', 'asc')->get();
+                    return $q->select($this->getSelectProductImagesAttr())
+                        ->orderBy('id', 'asc')
+                        ->get();
                 },
             ])
             ->withCount(['userViews'])
