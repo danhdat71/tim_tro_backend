@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductDraftRequest;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -21,6 +22,17 @@ class ProductController extends Controller
     public function store(CreateProductRequest $request)
     {
         $result = $this->productService->store($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+    
+    public function storeDraft(CreateProductDraftRequest $request)
+    {
+        $result = $this->productService->storeDraft($request);
 
         if ($result) {
             return $this->responseDataSuccess($result);
@@ -49,6 +61,17 @@ class ProductController extends Controller
         }
 
         return $this->responseMessageBadrequest();
+    }
+
+    public function detail(Request $request)
+    {
+        $result = $this->productService->getDetailByAuth($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageNotfound();
     }
 
     public function delete(DeleteProductRequest $request)

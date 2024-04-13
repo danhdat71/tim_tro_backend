@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\PaginateEnum;
+use App\Enums\ProductStatusEnum;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Support\Str;
@@ -60,6 +61,33 @@ class ProductService
         ];
     }
 
+    public function getStoreDraftAttributes()
+    {
+        return [
+            'title',
+            'slug',
+            'province_id',
+            'district_id',
+            'ward_id',
+            'price',
+            'description',
+            'tel',
+            'detail_address',
+            'lat',
+            'long',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+            'used_type',
+            'is_shared_house',
+            'time_rule',
+            'is_allow_pet',
+            'user_id',
+            'posted_at',
+            'status',
+        ];
+    }
+
     public function getUpdateAttributes()
     {
         return [
@@ -109,6 +137,7 @@ class ProductService
             'is_allow_pet',
             'user_id',
             'posted_at',
+            'status',
         ];
     }
 
@@ -162,12 +191,46 @@ class ProductService
             }
         }
 
-        return $created;
+        return $this->getDetailById($created->id);
+    }
+
+    public function storeDraft($request)
+    {
+        $this->request = $request;
+        $this->request->status = ProductStatusEnum::DRAFT->value;
+        $this->model = new Product;
+
+        $created = $this->fillDataByFields($this->getStoreDraftAttributes());
+
+        // Store images
+        if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
+            foreach ($this->request->product_images as $imageFile) {
+                $this->productImage = new ProductImage;
+                $this->storeProductImage($imageFile, $created->id);
+            }
+        }
+
+        return $this->getDetailById($created->id);
     }
 
     public function getDetailById($id)
     {
         return Product::where('id', $id)
+            ->select($this->getSelectProductAttr())
+            ->with([
+                'productImages' => function($q) {
+                    $q->select($this->getSelectProductImagesAttr())->get();
+                }
+            ])
+            ->first();
+    }
+
+    public function getDetailByAuth($request)
+    {
+        $this->request = $request;
+
+        return Product::where('id', $this->request->product_id)
+            ->where('user_id', $this->request->user()->id)
             ->select($this->getSelectProductAttr())
             ->with([
                 'productImages' => function($q) {
@@ -250,4 +313,5 @@ class ProductService
 
         return true;
     }
+    
 }

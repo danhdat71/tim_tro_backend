@@ -46,7 +46,9 @@ Route::group([
     Route::post('provider/update-item-info', [ProviderMypageController::class, 'updateItemData']);
 
     Route::post('provider/product/store', [ProductController::class, 'store']);
+    Route::post('provider/product/store-draft', [ProductController::class, 'storeDraft']);
     Route::post('provider/product/update', [ProductController::class, 'update']);
     Route::get('provider/product/list', [ProductController::class, 'list']);
     Route::post('provider/product/delete', [ProductController::class, 'delete']);
+    Route::get('provider/product/detail', [ProductController::class, 'detail']);
 });

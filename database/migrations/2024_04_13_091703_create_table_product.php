@@ -22,28 +22,28 @@ return new class extends Migration
             $table->string('title', 100)->index();
             $table->string('slug', 255)->index();
             $table->integer('price')->index();
-            $table->text('description');
+            $table->text('description')->nullable()->default(null);
             $table->string('tel', 20);
-            $table->string('detail_address', 200);
-            $table->double('lat');
-            $table->double('long');
-            $table->integer('acreage')->index();
-            $table->tinyInteger('bed_rooms')->index()
+            $table->string('detail_address', 200)->nullable()->default(null);
+            $table->double('lat')->nullable()->default(null);
+            $table->double('long')->nullable()->default(null);
+            $table->integer('acreage')->nullable()->default(null)->index();
+            $table->tinyInteger('bed_rooms')->nullable()->default(null)->index()
                 ->comment('số phòng ngủ');
-            $table->tinyInteger('toilet_rooms')->index()
+            $table->tinyInteger('toilet_rooms')->nullable()->default(null)->index()
                 ->comment('số phòng wc');
-            $table->tinyInteger('used_type')->index()
+            $table->tinyInteger('used_type')->nullable()->default(null)->index()
                 ->comment('1: trọ, 2: nhà nguyên căn, 3: sleepbox, 4: chung cư, 5: văn phòng, 6: khác');
-            $table->tinyInteger('is_shared_house')->index()
+            $table->tinyInteger('is_shared_house')->nullable()->default(null)->index()
                 ->comment('0: không chung chủ, 1: chung chủ');
-            $table->tinyInteger('time_rule')->index()
+            $table->tinyInteger('time_rule')->nullable()->default(null)->index()
                 ->comment('0: tự do, 1: quy định');
-            $table->tinyInteger('is_allow_pet')->index()
+            $table->tinyInteger('is_allow_pet')->nullable()->default(null)->index()
                 ->comment('1: không cho phép, 2: cho & cam kết, 3: tự do');
             $table->dateTime('posted_at')->nullable()->default(null);
             $table->tinyInteger('status')
                 ->default(1)
-                ->comment('0: draft, 1: reality, 3: hidden');
+                ->comment('0: draft, 1: reality, 2: hidden');
             $table->timestamps();
         });
     }
