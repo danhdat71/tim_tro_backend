@@ -23,4 +23,12 @@ return [
         'quality' => 60,
     ],
 
+    'product' => [
+        'thumb' => [
+            'width' => 300,
+            'height' => 350,
+            'quality' => 60,
+        ],
+    ]
+
 ];

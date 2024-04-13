@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthUserController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UploadImageController;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
@@ -43,4 +44,8 @@ Route::group([
     Route::get('provider/mypage', [ProviderMypageController::class, 'mypage']);
     Route::post('provider/update-avatar', [ProviderMypageController::class, 'updateAvatar']);
     Route::post('provider/update-item-info', [ProviderMypageController::class, 'updateItemData']);
+
+    Route::post('provider/product/store', [ProductController::class, 'store']);
+    Route::get('provider/product/list', [ProductController::class, 'list']);
+    Route::post('provider/product/delete', [ProductController::class, 'delete']);
 });

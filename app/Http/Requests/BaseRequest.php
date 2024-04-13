@@ -12,6 +12,13 @@ class BaseRequest extends FormRequest
 {
     use ResponseTrait;
 
+    public $request;
+
+    public function __construct()
+    {
+        $this->request = request();
+    }
+
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();

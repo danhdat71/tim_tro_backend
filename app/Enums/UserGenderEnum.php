@@ -8,7 +8,7 @@ enum UserGenderEnum: int
     case FEMALE = 1;
     case OTHER = 2;
 
-    public static function keyKeys()
+    public static function getKeys()
     {
         return [
             self::MALE->value,

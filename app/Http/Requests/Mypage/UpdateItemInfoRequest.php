@@ -47,8 +47,7 @@ class UpdateItemInfoRequest extends BaseRequest
         if ($this->request->has('tel')) {
             $rules['tel'] = [
                 'required',
-                'min:10',
-                'max:50',
+                'digits_between:10,20',
                 function($attr, $value, $fail) {
                     $authUserId = $this->user->id;
                     $exists = User::where('tel', $value)->where('id', '<>', $authUserId)->exists();
@@ -60,7 +59,7 @@ class UpdateItemInfoRequest extends BaseRequest
         }
 
         if ($this->request->has('gender')) {
-            $rules['gender'] = ['required', 'in:' . implode(',', UserGenderEnum::keyKeys())];
+            $rules['gender'] = ['required', 'in:' . implode(',', UserGenderEnum::getKeys())];
         }
 
         if ($this->request->has('birthday')) {
