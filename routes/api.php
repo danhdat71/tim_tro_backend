@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthUserController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UploadImageController;
@@ -51,4 +52,8 @@ Route::group([
     Route::get('provider/product/list', [ProductController::class, 'list']);
     Route::post('provider/product/delete', [ProductController::class, 'delete']);
     Route::get('provider/product/detail', [ProductController::class, 'detail']);
+
+    Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);
+    Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
+    Route::get('location/get-wards', [LocationController::class, 'getWards']);
 });

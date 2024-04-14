@@ -107,4 +107,10 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
 
+    'location' => [
+        'province' => 864000, //seconds, 10 days
+        'district' => 864000, //seconds, 10 days
+        'ward' => 864000, //seconds, 10 days
+    ]
+
 ];

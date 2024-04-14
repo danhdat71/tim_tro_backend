@@ -49,7 +49,7 @@ class CreateProductRequest extends BaseRequest
             'long' => ['required', 'numeric'],
             'acreage' => ['required', 'numeric', 'min:5', 'max:999'],
             'bed_rooms' => ['required', 'numeric', 'min:1', 'max:5'],
-            'toilet_rooms' => ['required', 'numeric', 'min:1', 'max:5'],
+            'toilet_rooms' => ['required', 'numeric', 'min:0', 'max:5'],
             'used_type' => ['required', 'in:' . implode(',', UsedTypeEnum::getKeys())],
             'is_shared_house' => ['required', 'in:' . implode(',', SharedHouseEnum::getKeys())],
             'time_rule' => ['required', 'in:' . implode(',', TimeRuleEnum::getKeys())],

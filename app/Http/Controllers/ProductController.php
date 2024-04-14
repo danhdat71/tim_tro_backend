@@ -21,6 +21,10 @@ class ProductController extends Controller
 
     public function store(CreateProductRequest $request)
     {
+        if ($request->check) {
+            return $this->responseMessageSuccess('Checked!');
+        }
+
         $result = $this->productService->store($request);
 
         if ($result) {
