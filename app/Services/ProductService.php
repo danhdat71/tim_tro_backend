@@ -293,7 +293,11 @@ class ProductService
             ->where('status', $this->request->status)
             ->paginate(PaginateEnum::PROVIDER_PRODUCT->value);
 
-        return $products;
+        return [
+            'list' => $products,
+            'draft_count' => Product::where('status', 0)->count(),
+            'total_count' => Product::where('status', 1)->count()
+        ];
     }
 
     public function delete($request)
