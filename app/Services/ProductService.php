@@ -153,9 +153,10 @@ class ProductService
 
     public function storeProductImage($imageFile, $productId)
     {
+        $hash = date('YmdHis') . Str::random(10);
         $userFolder = 'user_id_' . $this->request->user()->id;
-        $imageFileName = 'image_' . date('ymdhis') . '.jpg';
-        $imageFileNameThumb = 'thumb_image_' . date('ymdhis') . '.jpg';
+        $imageFileName = 'image_' . $hash . '.jpg';
+        $imageFileNameThumb = 'thumb_image_' . $hash . '.jpg';
         $userImagePath = "assets/imgs/$userFolder/product_$productId/";
         $imageFullPath = $userImagePath . $imageFileName;
         $imageFullPathThumb = $userImagePath . $imageFileNameThumb;
@@ -165,31 +166,34 @@ class ProductService
 
         $img = Image::make($imageFile);
         $img->save($imageFullPath, 100);
-        $thumbnailImage = $img;
-        $thumbnailImage->fit(config('image.product.thumb.width'), config('image.product.thumb.height'));
-        $thumbnailImage->save($imageFullPathThumb, config('image.product.thumb.quality'));
+        $img = Image::make($imageFile);
+        $img->fit(config('image.product.thumb.width'), config('image.product.thumb.height'));
+        $img->save($imageFullPathThumb, config('image.product.thumb.quality'));
 
-        // Update data
-        $this->productImage->url = $imageFullPath;
-        $this->productImage->thumb_url = $imageFullPathThumb;
-        $this->productImage->product_id = $productId;
-        $this->productImage->save();
+        return [
+            'url' => $imageFullPath,
+            'thumb_url' => $imageFullPathThumb,
+            'product_id' => $productId,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
     }
 
     public function store($request)
     {
         $this->request = $request;
         $this->model = new Product;
-        
+        $this->productImage = new ProductImage;
         $created = $this->fillDataByFields($this->getStoreAttributes());
 
         // Store images
+        $imageData = [];
         if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
             foreach ($this->request->product_images as $imageFile) {
-                $this->productImage = new ProductImage;
-                $this->storeProductImage($imageFile, $created->id);
+                $imageData[] = $this->storeProductImage($imageFile, $created->id);
             }
         }
+        $this->productImage->insert($imageData);
 
         return $this->getDetailById($created->id);
     }
@@ -229,13 +233,16 @@ class ProductService
     {
         $this->request = $request;
 
-        return Product::where('id', $this->request->product_id)
+        return Product::where('slug', $this->request->slug)
             ->where('user_id', $this->request->user()->id)
             ->select($this->getSelectProductAttr())
             ->with([
                 'productImages' => function($q) {
                     $q->select($this->getSelectProductImagesAttr())->get();
-                }
+                },
+                'province',
+                'district',
+                'ward',
             ])
             ->first();
     }
@@ -279,7 +286,8 @@ class ProductService
         $products = $this->model::select([
                 'id',
                 'title',
-                'price'
+                'price',
+                'slug',
             ])
             ->with([
                 'productImages' => function($q) {
@@ -289,8 +297,9 @@ class ProductService
                 },
             ])
             ->withCount(['userViews'])
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->where('status', $this->request->status)
+            ->where('user_id', $this->request->user()->id ?? null)
             ->paginate(PaginateEnum::PROVIDER_PRODUCT->value);
 
         return [
