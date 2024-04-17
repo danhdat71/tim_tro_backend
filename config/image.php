@@ -29,6 +29,7 @@ return [
             'height' => 350,
             'quality' => 60,
         ],
+        'max_images' => 6,
     ]
 
 ];

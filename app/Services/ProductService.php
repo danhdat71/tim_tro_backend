@@ -251,6 +251,7 @@ class ProductService
     {
         $this->request = $request;
         $this->model = Product::find($request->product_id);
+        $this->productImage = new ProductImage;
 
         //When user delete old images
         if ($this->request->del_product_images != '') {
@@ -267,12 +268,13 @@ class ProductService
             }
         }
         // When user upload new images
+        $imageData = [];
         if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
             foreach ($this->request->product_images as $imageFile) {
-                $this->productImage = new ProductImage;
-                $this->storeProductImage($imageFile, $this->model->id);
+                $imageData[] = $this->storeProductImage($imageFile, $this->model->id);
             }
         }
+        $this->productImage->insert($imageData);
 
         $result = $this->fillDataByFields($this->getUpdateAttributes());
         return $this->getDetailById($result->id);

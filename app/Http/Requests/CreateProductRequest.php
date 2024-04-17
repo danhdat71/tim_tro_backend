@@ -54,7 +54,11 @@ class CreateProductRequest extends BaseRequest
             'is_shared_house' => ['required', 'in:' . implode(',', SharedHouseEnum::getKeys())],
             'time_rule' => ['required', 'in:' . implode(',', TimeRuleEnum::getKeys())],
             'is_allow_pet' => ['required', 'in:' . implode(',', AllowPetEnum::getKeys())],
-            'product_images' => ['required'],
+            'product_images' => [
+                'required',
+                'array',
+                'max:6',
+            ],
             'product_images.*' => ['image', 'mimes:jpg,jpeg,png', 'max:5000'],
         ];
     }

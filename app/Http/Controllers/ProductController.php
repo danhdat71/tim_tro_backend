@@ -47,6 +47,10 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request)
     {
+        if ($request->check) {
+            return $this->responseMessageSuccess('Checked!');
+        }
+
         $result = $this->productService->update($request);
 
         if ($result) {

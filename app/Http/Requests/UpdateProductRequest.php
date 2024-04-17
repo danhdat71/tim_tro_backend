@@ -16,6 +16,21 @@ class UpdateProductRequest extends BaseRequest
     public function rules(): array
     {
         $this->request = request();
+        $limitCheck = function($attr, $value, $fail) {
+            $maxImages = config('image.product.max_images');
+            $productImageNum = ProductImage::where('product_id', $this->request->product_id)->count();
+            $delImagesNum = $this->request->del_product_images
+                ? count(explode(',',  $this->request->del_product_images))
+                : 0;
+            $leftOver = $productImageNum - $delImagesNum;
+            $newImagesCount = $this->request->product_images
+                ? count($this->request->product_images)
+                : 0;
+
+            if ($leftOver + $newImagesCount > config('image.product.max_images')) {
+                return $fail("Chỉ được phép đăng tối đa $maxImages ảnh.");
+            }
+        };
         $rules = [
             'product_id' => [
                 'required',
@@ -63,7 +78,7 @@ class UpdateProductRequest extends BaseRequest
             'long' => ['required', 'numeric'],
             'acreage' => ['required', 'numeric', 'min:5', 'max:999'],
             'bed_rooms' => ['required', 'numeric', 'min:1', 'max:5'],
-            'toilet_rooms' => ['required', 'numeric', 'min:1', 'max:5'],
+            'toilet_rooms' => ['required', 'numeric', 'min:0', 'max:5'],
             'used_type' => ['required', 'in:' . implode(',', UsedTypeEnum::getKeys())],
             'is_shared_house' => ['required', 'in:' . implode(',', SharedHouseEnum::getKeys())],
             'time_rule' => ['required', 'in:' . implode(',', TimeRuleEnum::getKeys())],
@@ -71,6 +86,7 @@ class UpdateProductRequest extends BaseRequest
             'del_product_images' => ['nullable'],
             'product_images' => [
                 'nullable',
+                $limitCheck
             ],
             'product_images.*' => [
                 'nullable',
@@ -80,7 +96,8 @@ class UpdateProductRequest extends BaseRequest
             ],
         ];
 
-        if ($this->request->product_images == '' || $this->request->has('product_images') == false) {
+        // Handle required images, not allow delete all
+        if ($this->request->product_images == '' || !$this->request->has('product_images')) {
             if ($this->request->del_product_images != '' && $this->request->has('del_product_images')) {
                 $productImageNum = ProductImage::where('product_id', $this->request->product_id)->count();
                 $delNum = ProductImage::whereIn('id', explode(',', $this->request->del_product_images))->count();

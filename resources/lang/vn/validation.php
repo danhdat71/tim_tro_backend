@@ -175,8 +175,8 @@ return [
         'is_shared_house' => 'loại chung chủ',
         'time_rule' => 'quy định giờ giấc',
         'is_allow_pet' => 'cho phép nuôi',
-        'product_images' => 'ảnh sản phẩm',
-        'product_images.*' => 'ảnh sản phẩm',
+        'product_images' => 'ảnh cho bài đăng',
+        'product_images.*' => 'ảnh cho bài đăng',
     ],
 
 ];
