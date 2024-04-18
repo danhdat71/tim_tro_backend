@@ -5,6 +5,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UploadImageController;
+use App\Http\Controllers\UserProductController;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
 use Illuminate\Http\Request;
@@ -62,6 +63,6 @@ Route::group([
     Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
     Route::get('location/get-wards', [LocationController::class, 'getWards']);
 
-    //Route::post('user/save-product', );
+    Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
 });
 
