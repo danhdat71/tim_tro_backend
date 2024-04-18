@@ -111,6 +111,12 @@ return [
         'province' => 864000, //seconds, 10 days
         'district' => 864000, //seconds, 10 days
         'ward' => 864000, //seconds, 10 days
-    ]
+    ],
+
+    'public_location' => [
+        'province' => 600, //seconds, 5 minutes
+        'district' => 600, //seconds, 5 minutes
+        'ward' => 600, //seconds, 5 minutes
+    ],
 
 ];

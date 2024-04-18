@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use App\Enums\BoxLimitEnum;
 use App\Models\District;
 use App\Models\Province;
 use App\Models\Ward;
@@ -39,11 +40,12 @@ class LocationService
         ];
     }
 
-    public function getProvinces()
+    public function getProvinces($request)
     {
         $this->province = Province::class;
+        $this->request = $request;
 
-        return Cache::remember('provinces', config('cache.location.province'), function () {
+        return Cache::remember('provinces:' . implode(',', $this->request->all()), config('cache.location.province'), function () {
             return $this->province::select($this->getSelectProvince())
                 ->orderByRaw("
                     CASE id
@@ -58,8 +60,59 @@ class LocationService
                         ELSE 9
                     END
                 ")
+                ->when($this->request->limit != '', function($q) {
+                    $q->limit($this->request->limit);
+                })
                 ->get();
         });
+    }
+
+    public function publicProvinces($request)
+    {
+        $this->province = Province::class;
+        $this->request = $request;
+
+        return Cache::remember(
+            'public_provinces:' . implode(',', $this->request->all()),
+            config('cache.public_location.province'),
+            function () {
+                return $this->province::select($this->getSelectProvince())
+                    ->withCount('products')
+                    ->when($this->request->limit != '', function($q) {
+                        $q->limit($this->request->limit);
+                    })
+                    ->orderBy('products_count', 'desc')
+                    ->get();
+            }
+        );
+    }
+
+    public function provincesWithDistricts($request)
+    {
+        $this->province = Province::class;
+        $this->request = $request;
+
+        return Cache::remember(
+            'public_provinces_district_count:' . implode(',', $this->request->all()),
+            config('cache.public_location.province'),
+            function () {
+                return $this->province::with([
+                        'districts' => function($q) {
+                            $q->withCount('products');
+                        }
+                    ])
+                    ->orderByRaw("
+                        CASE id
+                            WHEN 50 THEN 1
+                            WHEN 1 THEN 2
+                            WHEN 59 THEN 3
+                            ELSE 4
+                        END
+                    ")
+                    ->limit(BoxLimitEnum::PROVINCES->value)
+                    ->get();
+            }
+        );
     }
 
     public function getDistricts($request)

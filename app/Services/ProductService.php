@@ -141,6 +141,19 @@ class ProductService
         ];
     }
 
+    public function getSelectPublicProductAttr()
+    {
+        return [
+            'id',
+            'title',
+            'slug',
+            'price',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+        ];
+    }
+
     public function getSelectProductImagesAttr()
     {
         return [
@@ -280,7 +293,7 @@ class ProductService
         return $this->getDetailById($result->id);
     }
 
-    public function list($request)
+    public function listByAuth($request)
     {
         $this->request = $request;
         $this->model = Product::class;
@@ -309,6 +322,56 @@ class ProductService
             'draft_count' => Product::where('status', 0)->count(),
             'total_count' => Product::where('status', 1)->count()
         ];
+    }
+
+    public function publicList($request)
+    {
+        $this->request = $request;
+        $this->model = Product::class;
+
+        $list = $this->model::select($this->getSelectPublicProductAttr())
+            // ->with([
+            //     'productImages' => function($q) {
+            //         $q->select('product_id', 'thumb_url');
+            //     }
+            // ])
+            ->when($this->request->keyword != '', function($q) {
+                $q->search($this->request->keyword);
+            })
+            ->when($this->request->province_id != '', function($q) {
+                $q->where('province_id', $this->request->province_id);
+            })
+            ->when($this->request->district_id != '', function($q) {
+                $q->where('district_id', $this->request->district_id);
+            })
+            ->when($this->request->ward_id != '', function($q) {
+                $q->where('ward_id', $this->request->ward_id);
+            })
+            ->when($this->request->price_range != '', function($q) {
+                $priceRange = explode(',', $this->request->price_range);
+                $q->whereIn('price', $priceRange);
+            })
+            ->when($this->request->acreage != '', function($q) {
+                $acreage = explode(',', $this->request->acreage);
+                $q->whereIn('acreage', $acreage);
+            })
+            ->when($this->request->used_type != '', function($q) {
+                $usedType = explode(',', $this->request->used_type);
+                $q->whereIn('used_type', $usedType);
+            })
+            ->when($this->request->bed_rooms != '', function($q) {
+                $q->where('bed_rooms', $this->request->bed_rooms);
+            })
+            ->when($this->request->toilet_rooms != '', function($q) {
+                $q->where('toilet_rooms', $this->request->toilet_rooms);
+            })
+            ->when($this->request->is_allow_pet != '', function($q) {
+                $q->where('is_allow_pet', $this->request->is_allow_pet);
+            })
+            ->orderBy('posted_at', 'desc')
+            ->paginate(PaginateEnum::PUBLIC_PRODUCT->value);
+
+        return $list;
     }
 
     public function delete($request)

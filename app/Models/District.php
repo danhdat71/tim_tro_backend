@@ -20,4 +20,9 @@ class District extends Model
     {
         return $this->belongsTo(Province::class, 'province_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'district_id', 'id');
+    }
 }

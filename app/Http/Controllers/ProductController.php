@@ -60,9 +60,20 @@ class ProductController extends Controller
         return $this->responseMessageBadrequest();
     }
 
-    public function list(Request $request)
+    public function listByAuth(Request $request)
     {
-        $result = $this->productService->list($request);
+        $result = $this->productService->listByAuth($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function publicList(Request $request)
+    {
+        $result = $this->productService->publicList($request);
 
         if ($result) {
             return $this->responseDataSuccess($result);

@@ -14,9 +14,31 @@ class LocationController extends Controller
         $this->locationService = $locationService;
     }
 
-    public function getProvinces()
+    public function getProvinces(Request $request)
     {
-        $result = $this->locationService->getProvinces();
+        $result = $this->locationService->getProvinces($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function publicProvinces(Request $request)
+    {
+        $result = $this->locationService->publicProvinces($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function publicProvincesWithDistricts(Request $request)
+    {
+        $result = $this->locationService->provincesWithDistricts($request);
 
         if ($result) {
             return $this->responseDataSuccess($result);

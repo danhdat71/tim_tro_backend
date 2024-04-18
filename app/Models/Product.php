@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\FullTextSearch;
 
 class Product extends Model
 {
     use HasFactory;
+    use FullTextSearch;
     
     public $table = 'products';
 
@@ -32,6 +34,12 @@ class Product extends Model
         'time_rule',
         'is_allow_pet',
         'posted_at',
+    ];
+
+    protected $searchable = [
+        'title',
+        'description',
+        'detail_address',
     ];
 
     public function user()

@@ -35,6 +35,11 @@ Route::post('auth/forgot-password', [AuthUserController::class, 'forgotPassword'
 Route::post('auth/verify-otp-change-password', [AuthUserController::class, 'verifyOTPChangePassword']);
 Route::post('auth/change-password', [AuthUserController::class, 'changePassword']);
 
+// Public API
+Route::get('products', [ProductController::class, 'publicList']);
+Route::get('provinces', [LocationController::class, 'publicProvinces']);
+Route::get('provinces-with-districts', [LocationController::class, 'publicProvincesWithDistricts']);
+
 Route::group([
     'prefix' => '',
     'middleware' => 'auth:sanctum',
@@ -49,11 +54,14 @@ Route::group([
     Route::post('provider/product/store', [ProductController::class, 'store']);
     Route::post('provider/product/store-draft', [ProductController::class, 'storeDraft']);
     Route::post('provider/product/update', [ProductController::class, 'update']);
-    Route::get('provider/product/list', [ProductController::class, 'list']);
+    Route::get('provider/product/list', [ProductController::class, 'listByAuth']);
     Route::post('provider/product/delete', [ProductController::class, 'delete']);
     Route::get('provider/product/detail', [ProductController::class, 'detail']);
 
     Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);
     Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
     Route::get('location/get-wards', [LocationController::class, 'getWards']);
+
+    //Route::post('user/save-product', );
 });
+
