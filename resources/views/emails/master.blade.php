@@ -16,7 +16,7 @@
         style="max-width:650px;min-width:320px;margin:auto;background: white;border-radius:10px;padding:35px;font-size:16px;font-family:Roboto,Arial;line-height:1.7;"
     >
         @yield('content')
-        <div>Chúc bạn có nhiều sức khỏe !</div>
+        <div style="padding-top: 20px;">Chúc bạn có nhiều sức khỏe và vui vẻ !</div>
         <div>Trân trọng !</div>
     </div>
     <div

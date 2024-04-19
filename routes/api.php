@@ -7,6 +7,7 @@ use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UploadImageController;
 use App\Http\Controllers\UserProductController;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
+use App\Http\Middleware\LimitRequest\LimitReportMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,8 @@ Route::post('auth/change-password', [AuthUserController::class, 'changePassword'
 Route::get('products', [ProductController::class, 'publicList']);
 Route::get('provinces', [LocationController::class, 'publicProvinces']);
 Route::get('provinces-with-districts', [LocationController::class, 'publicProvincesWithDistricts']);
-Route::post('user/report-product', [UserProductController::class, 'reportProduct']);
+Route::post('user/report-product', [UserProductController::class, 'reportProduct'])
+    ->middleware(LimitReportMiddleware::class);
 
 Route::group([
     'prefix' => '',

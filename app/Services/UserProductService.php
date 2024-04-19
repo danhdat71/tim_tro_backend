@@ -60,7 +60,7 @@ class UserProductService
     {
         $this->request = $request;
         $this->request->is_read = false;
-        $this->model = UserReportProduct::class;
+        $this->model = new UserReportProduct;
 
         $this->fillDataByFields($this->getReportProductAttr());
 
