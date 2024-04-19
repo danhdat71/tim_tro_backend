@@ -156,6 +156,7 @@ return [
         'user_identifier' => 'mã đăng nhập',
         'avatar' => 'ảnh đại diện',
         'app_id' => 'id người dùng',
+        'user_id' => 'id người dùng',
         'gender' => 'giới tính',
         'birthday' => 'ngày sinh',
         'description' => 'mô tả',
@@ -177,6 +178,7 @@ return [
         'is_allow_pet' => 'cho phép nuôi',
         'product_images' => 'ảnh cho bài đăng',
         'product_images.*' => 'ảnh cho bài đăng',
+        'report_type' => 'loại báo cáo',
     ],
 
 ];

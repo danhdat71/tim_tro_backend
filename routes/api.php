@@ -40,6 +40,7 @@ Route::post('auth/change-password', [AuthUserController::class, 'changePassword'
 Route::get('products', [ProductController::class, 'publicList']);
 Route::get('provinces', [LocationController::class, 'publicProvinces']);
 Route::get('provinces-with-districts', [LocationController::class, 'publicProvincesWithDistricts']);
+Route::post('user/report-product', [UserProductController::class, 'reportProduct']);
 
 Route::group([
     'prefix' => '',
@@ -65,4 +66,3 @@ Route::group([
 
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
 });
-

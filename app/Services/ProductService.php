@@ -330,11 +330,11 @@ class ProductService
         $this->model = Product::class;
 
         $list = $this->model::select($this->getSelectPublicProductAttr())
-            // ->with([
-            //     'productImages' => function($q) {
-            //         $q->select('product_id', 'thumb_url');
-            //     }
-            // ])
+            ->with([
+                'productImages' => function($q) {
+                    $q->select('product_id', 'thumb_url');
+                }
+            ])
             ->when($this->request->keyword != '', function($q) {
                 $q->search($this->request->keyword);
             })
@@ -368,7 +368,10 @@ class ProductService
             ->when($this->request->is_allow_pet != '', function($q) {
                 $q->where('is_allow_pet', $this->request->is_allow_pet);
             })
-            ->orderBy('posted_at', 'desc')
+            ->when($this->request->order_by != '', function($q) {
+                $orderBy = explode('|', $this->request->order_by);
+                $q->orderBy($orderBy[0], $orderBy[1]);
+            })
             ->paginate(PaginateEnum::PUBLIC_PRODUCT->value);
 
         return $list;
