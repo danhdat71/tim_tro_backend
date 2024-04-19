@@ -38,6 +38,8 @@ Route::post('auth/verify-otp-change-password', [AuthUserController::class, 'veri
 Route::post('auth/change-password', [AuthUserController::class, 'changePassword']);
 
 // Public API
+Route::get('public-product/{slug}', [ProductController::class, 'publicDetail']);
+Route::get('price-table/{current_product_slug}');
 Route::get('products', [ProductController::class, 'publicList']);
 Route::get('provinces', [LocationController::class, 'publicProvinces']);
 Route::get('provinces-with-districts', [LocationController::class, 'publicProvincesWithDistricts']);

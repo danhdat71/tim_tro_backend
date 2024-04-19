@@ -395,4 +395,43 @@ class ProductService
         return true;
     }
     
+    public function publicDetail($request)
+    {
+        $this->request = $request;
+        $this->model = Product::class;
+
+        return $this->model::select([
+            'id',
+            'user_id',
+            'price',
+            'tel',
+            'detail_address',
+            'is_shared_house',
+            'used_type',
+            'bed_rooms',
+            'toilet_rooms',
+            'time_rule',
+            'is_allow_pet',
+            'description',
+            'lat',
+            'long',
+            'posted_at',
+        ])
+        ->where('slug', $this->request->slug)
+        ->where('status', ProductStatusEnum::REALITY->value)
+        ->with([
+            'user' => function($q) {
+                $q->select(['id', 'full_name', 'avatar', 'created_at']);
+            }
+        ])
+        ->first();
+    }
+
+    public function priceTable($request)
+    {
+        $this->request = $request;
+        $this->model = Product::class;
+
+        
+    }
 }
