@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UserTypeEnum;
 use App\Models\User;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
@@ -48,6 +49,21 @@ class UserService
         ];
     }
 
+    public function getPublicProviderInfo()
+    {
+        return [
+            'id',
+            'app_id',
+            'full_name',
+            'avatar',
+            'email',
+            'tel',
+            'gender',
+            'birthday',
+            'description',
+        ];
+    }
+
     public function getUser($userIdentifier)
     {
         if (filter_var($userIdentifier, FILTER_VALIDATE_EMAIL)) {
@@ -70,6 +86,17 @@ class UserService
         $this->setUserByAuth();
 
         return $this->model;
+    }
+
+    public function publicProviderInfo($request)
+    {
+        $this->request = $request;
+        $this->model = User::class;
+
+        return $this->model::select($this->getPublicProviderInfo())
+            ->where('app_id', $this->request->app_id)
+            ->where('user_type', UserTypeEnum::PROVIDER->value)
+            ->first();
     }
 
     public function updateUserAvatar($request)

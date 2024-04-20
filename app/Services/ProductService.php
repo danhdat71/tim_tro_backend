@@ -7,9 +7,9 @@ use App\Enums\ProductStatusEnum;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Carbon\Carbon;
 
 class ProductService
 {
@@ -144,7 +144,7 @@ class ProductService
     public function getSelectPublicProductAttr()
     {
         return [
-            'id',
+            'products.id',
             'title',
             'slug',
             'price',
@@ -195,6 +195,7 @@ class ProductService
     public function store($request)
     {
         $this->request = $request;
+        $this->request->posted_at = Carbon::now()->toDateTimeString();
         $this->model = new Product;
         $this->productImage = new ProductImage;
         $created = $this->fillDataByFields($this->getStoreAttributes());
@@ -427,11 +428,21 @@ class ProductService
         ->first();
     }
 
-    public function priceTable($request)
+    public function publicProviderProducts($request)
     {
-        $this->request = $request;
         $this->model = Product::class;
+        $this->request = $request;
 
-        
+        return $this->model::select($this->getSelectPublicProductAttr())
+            ->leftJoin('users', 'users.id', '=', 'products.user_id')
+            ->where('users.app_id', $this->request->app_id)
+            ->where('products.status', ProductStatusEnum::REALITY->value)
+            ->with([
+                'productImages' => function($q) {
+                    $q->select(['id', 'product_id', 'thumb_url']);
+                }
+            ])
+            ->orderBy('posted_at', 'DESC')
+            ->paginate(PaginateEnum::PROVIDER_PRODUCT->value);
     }
 }

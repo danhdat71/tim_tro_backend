@@ -114,15 +114,4 @@ class ProductController extends Controller
 
         return $this->responseMessageNotfound();
     }
-
-    public function priceTable(Request $request)
-    {
-        $result = $this->productService->priceTable($request);
-
-        if ($result) {
-            return $this->responseDataSuccess($result);
-        }
-
-        return $this->responseMessageNotfound();
-    }
 }
