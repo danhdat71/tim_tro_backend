@@ -9,7 +9,7 @@ class UserViewedProduct extends Model
 {
     use HasFactory;
 
-    public $table = 'user_viewed_product';
+    public $table = 'users_viewed_products';
 
     public $fillable = [
         'product_id',

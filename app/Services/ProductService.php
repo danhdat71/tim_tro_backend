@@ -6,6 +6,7 @@ use App\Enums\PaginateEnum;
 use App\Enums\ProductStatusEnum;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\UserViewedProduct;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -401,7 +402,7 @@ class ProductService
         $this->request = $request;
         $this->model = Product::class;
 
-        return $this->model::select([
+        $product = $this->model::select([
             'id',
             'user_id',
             'price',
@@ -426,6 +427,17 @@ class ProductService
             }
         ])
         ->first();
+
+        // Store viewed users
+        if ($product) {
+            UserViewedProduct::updateOrCreate([
+                'user_id' => $this->request->user()->id ?? null,
+                'guest_ip' => $this->request->ip(),
+                'product_id' => $product->id
+            ]);
+        }
+
+        return $product;
     }
 
     public function publicProviderProducts($request)
