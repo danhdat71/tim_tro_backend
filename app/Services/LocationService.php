@@ -142,4 +142,31 @@ class LocationService
                 ->get();
         });
     }
+
+    public function getWardsWithCountProducts($request)
+    {
+        $this->district = District::class;
+        $this->ward = Ward::class;
+        $this->request = $request;
+        
+        $district = $this->district::select(['id', 'name'])
+            ->where('id', $this->request->district_id)
+            ->first();
+
+        $wards = $this->ward::select(['id', 'name'])
+            ->withCount([
+                'products' => function($q) {
+                    if ($this->request->has('current_price') && $this->request->current_price != '') {
+                        $q->where('price', '<=', $this->request->current_price);
+                    }
+                }
+            ])
+            ->where('district_id', $this->request->district_id)
+            ->get();
+
+        return [
+            'district' => $district,
+            'wards' => $wards,
+        ];
+    }
 }

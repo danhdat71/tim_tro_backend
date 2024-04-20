@@ -15,4 +15,9 @@ class Ward extends Model
     {
         return $this->belongsTo(Ward::class, 'district_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'ward_id', 'id');
+    }
 }
