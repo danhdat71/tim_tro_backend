@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserReportProductRequest;
+use App\Http\Requests\UserSavedProductRequest;
 use App\Mail\NotificationAdminCheckProductReport;
 use App\Services\SendMailService;
 use App\Services\UserProductService;
@@ -21,7 +22,7 @@ class UserProductController extends Controller
         $this->sendMailService = $sendMailService;
     }
 
-    public function saveProduct(Request $request)
+    public function saveProduct(UserSavedProductRequest $request)
     {
         $result = $this->userProductService->saveProduct($request);
 
