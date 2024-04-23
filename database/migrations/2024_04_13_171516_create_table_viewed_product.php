@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users_viewed_products', function (Blueprint $table) {
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('user_id')->nullable()->default(null);
-            $table->string('guest_ip')->nullable()->default(null);
+            $table->unsignedBigInteger('product_id')
+                ->index();
+            $table->unsignedBigInteger('user_id')
+                ->index()
+                ->nullable()
+                ->default(null);
+            $table->string('guest_ip')
+                ->index()
+                ->nullable()
+                ->default(null);
             $table->timestamps();
         });
     }
