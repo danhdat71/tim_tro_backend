@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum PaginateEnum: int
 {
-    case PROVIDER_PRODUCT = 10;
-    case PUBLIC_PRODUCT = 20;
+    case PAGINATE_5 = 5;
+    case PAGINATE_10 = 10;
+    case PAGINATE_20 = 20;
 }

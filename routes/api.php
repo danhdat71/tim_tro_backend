@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthUserController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProviderFollowerController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UploadImageController;
 use App\Http\Controllers\UserProductController;
@@ -37,14 +39,18 @@ Route::post('auth/forgot-password', [AuthUserController::class, 'forgotPassword'
 Route::post('auth/verify-otp-change-password', [AuthUserController::class, 'verifyOTPChangePassword']);
 Route::post('auth/change-password', [AuthUserController::class, 'changePassword']);
 
-// Public API
+// Provider mypage main info
 Route::get('public-provider/{app_id}', [ProviderMypageController::class, 'publicInfo']);
+// Provider mypage products
 Route::get('public-provider/{app_id}/products', [ProviderMypageController::class, 'publicProducts']);
+// Detail hostel
 Route::get('public-product/{slug}', [ProductController::class, 'publicDetail']);
-Route::get('price-table/{current_product_slug}');
+// Public list products all pages
 Route::get('products', [ProductController::class, 'publicList']);
+// Public all provinces
 Route::get('provinces', [LocationController::class, 'publicProvinces']);
 Route::get('provinces-with-districts', [LocationController::class, 'publicProvincesWithDistricts']);
+// Search other hostel with price less than current hostel viewing
 Route::get('wards-with-count-products', [LocationController::class, 'publicWardsWithCountProducts']);
 Route::post('user/report-product', [UserProductController::class, 'reportProduct'])
     ->middleware(LimitReportMiddleware::class);
@@ -56,9 +62,12 @@ Route::group([
     Route::get('/auth/get-me', [AuthUserController::class, 'getMe']);
     Route::post('/auth/logout', [AuthUserController::class, 'logout']);
 
+    // Provider mypage info
     Route::get('provider/mypage', [ProviderMypageController::class, 'mypage']);
     Route::post('provider/update-avatar', [ProviderMypageController::class, 'updateAvatar']);
     Route::post('provider/update-item-info', [ProviderMypageController::class, 'updateItemData']);
+    // Provider mypage follower
+    Route::get('provider/followers', [FollowController::class, 'followers']);
 
     Route::post('provider/product/store', [ProductController::class, 'store']);
     Route::post('provider/product/store-draft', [ProductController::class, 'storeDraft']);
@@ -66,6 +75,9 @@ Route::group([
     Route::get('provider/product/list', [ProductController::class, 'listByAuth']);
     Route::post('provider/product/delete', [ProductController::class, 'delete']);
     Route::get('provider/product/detail', [ProductController::class, 'detail']);
+
+    // Finder
+    Route::post('finder/follow', [FollowController::class, 'follow']);
 
     Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);
     Route::get('location/get-districts', [LocationController::class, 'getDistricts']);

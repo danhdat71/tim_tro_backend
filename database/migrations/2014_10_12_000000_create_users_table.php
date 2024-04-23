@@ -25,6 +25,7 @@ return new class extends Migration
                 ->default(null)
                 ->comment('0: male, 1: female, 2: other');
             $table->tinyInteger('user_type')
+                ->index()
                 ->comment('0: provider, 1: finder, 10: admin');
             $table->date('birthday')
                 ->nullable()

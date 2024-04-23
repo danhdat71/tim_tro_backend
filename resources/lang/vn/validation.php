@@ -179,6 +179,8 @@ return [
         'product_images' => 'ảnh cho bài đăng',
         'product_images.*' => 'ảnh cho bài đăng',
         'report_type' => 'loại báo cáo',
+        'action' => 'hành động',
+        'follower_receive_id' => 'id người được follow',
     ],
 
 ];

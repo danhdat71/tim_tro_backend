@@ -317,7 +317,7 @@ class ProductService
             ->orderBy('created_at', 'desc')
             ->where('status', $this->request->status)
             ->where('user_id', $this->request->user()->id ?? null)
-            ->paginate(PaginateEnum::PROVIDER_PRODUCT->value);
+            ->paginate(PaginateEnum::PAGINATE_10->value);
 
         return [
             'list' => $products,
@@ -374,7 +374,7 @@ class ProductService
                 $orderBy = explode('|', $this->request->order_by);
                 $q->orderBy($orderBy[0], $orderBy[1]);
             })
-            ->paginate(PaginateEnum::PUBLIC_PRODUCT->value);
+            ->paginate(PaginateEnum::PAGINATE_20->value);
 
         return $list;
     }
@@ -455,6 +455,6 @@ class ProductService
                 }
             ])
             ->orderBy('posted_at', 'DESC')
-            ->paginate(PaginateEnum::PROVIDER_PRODUCT->value);
+            ->paginate(PaginateEnum::PAGINATE_10->value);
     }
 }
