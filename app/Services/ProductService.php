@@ -152,6 +152,9 @@ class ProductService
             'acreage',
             'bed_rooms',
             'toilet_rooms',
+            'ward_id',
+            'district_id',
+            'province_id',
         ];
     }
 
@@ -335,7 +338,16 @@ class ProductService
             ->with([
                 'productImages' => function($q) {
                     $q->select('product_id', 'thumb_url');
-                }
+                },
+                'district' => function($q){
+                    $q->select('id', 'name');
+                },
+                'province' => function($q){
+                    $q->select('id', 'name');
+                },
+                'ward' => function($q){
+                    $q->select('id', 'name');
+                },
             ])
             ->when($this->request->keyword != '', function($q) {
                 $q->search($this->request->keyword);

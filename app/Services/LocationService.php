@@ -19,6 +19,7 @@ class LocationService
         return [
             'id as value',
             'name as label',
+            'id',
         ];
     }
 
@@ -96,8 +97,9 @@ class LocationService
             'public_provinces_district_count:' . implode(',', $this->request->all()),
             config('cache.public_location.province'),
             function () {
-                return $this->province::with([
+                return $this->province::select($this->getSelectProvince())->with([
                         'districts' => function($q) {
+                            $q->select(['id', 'province_id', 'name as label', 'id as value']);
                             $q->withCount('products');
                         }
                     ])
