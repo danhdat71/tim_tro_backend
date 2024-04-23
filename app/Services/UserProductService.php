@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PaginateEnum;
 use App\Enums\SyncStatusEnum;
 use App\Models\Product;
 use App\Models\User;
@@ -42,6 +43,19 @@ class UserProductService
         return ['id', 'user_id', 'title', 'posted_at'];
     }
 
+    public function getSelectPublicProductAttr()
+    {
+        return [
+            'products.id',
+            'title',
+            'slug',
+            'price',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+        ];
+    }
+
     public function saveProduct($request)
     {
         $this->request = $request;
@@ -72,5 +86,19 @@ class UserProductService
         return $this->model = Product::select($this->getSelectDetailProduct())
             ->where('id', $productId)
             ->first();
+    }
+
+    public function listSavedProducts($request)
+    {
+        $this->request = $request;
+        $this->model = User::find($this->request->user()->id);
+
+        return $this->model->userSavedProducts()
+            ->with([
+                'productImages' => function($q) {
+                    $q->select('product_id', 'thumb_url');
+                }
+            ])
+            ->paginate(PaginateEnum::PAGINATE_10->value, $this->getSelectPublicProductAttr());
     }
 }

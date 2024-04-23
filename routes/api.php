@@ -4,14 +4,10 @@ use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProviderFollowerController;
 use App\Http\Controllers\ProviderMypageController;
-use App\Http\Controllers\UploadImageController;
 use App\Http\Controllers\UserProductController;
-use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
 use App\Http\Middleware\LimitRequest\LimitReportMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,10 +20,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::post('auth/login', [AuthUserController::class, 'login']);
     #->middleware(LimitLoginMiddleware::class);
@@ -68,7 +60,7 @@ Route::group([
     Route::post('provider/update-item-info', [ProviderMypageController::class, 'updateItemData']);
     // Provider mypage follower
     Route::get('provider/followers', [FollowController::class, 'followers']);
-
+    // Provider product manager
     Route::post('provider/product/store', [ProductController::class, 'store']);
     Route::post('provider/product/store-draft', [ProductController::class, 'storeDraft']);
     Route::post('provider/product/update', [ProductController::class, 'update']);
@@ -85,4 +77,5 @@ Route::group([
     Route::get('location/get-wards', [LocationController::class, 'getWards']);
 
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
+    Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);
 });
