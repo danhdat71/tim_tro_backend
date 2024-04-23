@@ -26,6 +26,17 @@ class FollowController extends Controller
         return $this->responseMessageBadrequest();
     }
 
+    public function following(Request $request)
+    {
+        $result = $this->followService->getFollowings($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
     public function follow(FollowRequest $request)
     {
         $result = $this->followService->follow($request);

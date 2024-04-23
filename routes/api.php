@@ -78,6 +78,7 @@ Route::group([
 
     // Finder
     Route::post('finder/follow', [FollowController::class, 'follow']);
+    Route::get('finder/followings', [FollowController::class, 'following']);
 
     Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);
     Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
