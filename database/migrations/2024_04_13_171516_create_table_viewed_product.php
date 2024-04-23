@@ -18,7 +18,7 @@ return new class extends Migration
                 ->index()
                 ->nullable()
                 ->default(null);
-            $table->string('guest_ip')
+            $table->string('guest_ip', 20)
                 ->index()
                 ->nullable()
                 ->default(null);
