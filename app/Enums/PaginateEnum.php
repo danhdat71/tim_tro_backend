@@ -6,5 +6,5 @@ enum PaginateEnum: int
 {
     case PAGINATE_5 = 5;
     case PAGINATE_10 = 10;
-    case PAGINATE_20 = 20;
+    case PAGINATE_20 = 1;
 }

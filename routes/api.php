@@ -47,6 +47,11 @@ Route::get('wards-with-count-products', [LocationController::class, 'publicWards
 Route::post('user/report-product', [UserProductController::class, 'reportProduct'])
     ->middleware(LimitReportMiddleware::class);
 
+// Get location
+Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);
+Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
+Route::get('location/get-wards', [LocationController::class, 'getWards']);
+
 Route::group([
     'prefix' => '',
     'middleware' => 'auth:sanctum',
@@ -71,10 +76,6 @@ Route::group([
     // Finder
     Route::post('finder/follow', [FollowController::class, 'follow']);
     Route::get('finder/followings', [FollowController::class, 'following']);
-
-    Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);
-    Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
-    Route::get('location/get-wards', [LocationController::class, 'getWards']);
 
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
     Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);

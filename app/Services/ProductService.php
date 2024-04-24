@@ -367,7 +367,8 @@ class ProductService
             })
             ->when($this->request->acreage != '', function($q) {
                 $acreage = explode(',', $this->request->acreage);
-                $q->whereIn('acreage', $acreage);
+                $q->where('acreage', '>=', $acreage[0]);
+                $q->where('acreage', '<=', $acreage[1]);
             })
             ->when($this->request->used_type != '', function($q) {
                 $usedType = explode(',', $this->request->used_type);
