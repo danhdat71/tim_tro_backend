@@ -363,7 +363,8 @@ class ProductService
             })
             ->when($this->request->price_range != '', function($q) {
                 $priceRange = explode(',', $this->request->price_range);
-                $q->whereIn('price', $priceRange);
+                $q->where('price', '>=', $priceRange[0]);
+                $q->where('price', '<=', $priceRange[1]);
             })
             ->when($this->request->acreage != '', function($q) {
                 $acreage = explode(',', $this->request->acreage);
