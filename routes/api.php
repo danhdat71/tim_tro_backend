@@ -46,6 +46,8 @@ Route::get('provinces-with-districts', [LocationController::class, 'publicProvin
 Route::get('wards-with-count-products', [LocationController::class, 'publicWardsWithCountProducts']);
 Route::post('user/report-product', [UserProductController::class, 'reportProduct'])
     ->middleware(LimitReportMiddleware::class);
+// Get prices with count product
+Route::get('prices-with-count', [ProductController::class, 'getPriceWithProductCount']);
 
 // Get location
 Route::get('location/get-provinces', [LocationController::class, 'getProvinces']);

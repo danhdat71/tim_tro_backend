@@ -93,12 +93,19 @@ class UserProductService
         $this->request = $request;
         $this->model = User::find($this->request->user()->id);
 
-        return $this->model->userSavedProducts()
+        $list = $this->model->userSavedProducts()
             ->with([
                 'productImages' => function($q) {
                     $q->select('product_id', 'thumb_url');
                 }
-            ])
-            ->paginate(PaginateEnum::PAGINATE_10->value, $this->getSelectPublicProductAttr());
+            ]);
+
+        if ($this->request->is_all) {
+            $list = $list->pluck('id');
+        } else {
+            $list = $list->paginate(PaginateEnum::PAGINATE_10->value, $this->getSelectPublicProductAttr());
+        }
+
+        return $list;
     }
 }

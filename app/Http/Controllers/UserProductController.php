@@ -27,7 +27,9 @@ class UserProductController extends Controller
         $result = $this->userProductService->saveProduct($request);
 
         if ($result) {
-            return $this->responseMessageSuccess();
+            $request['is_all'] = true;
+            $listSavedIds = $this->userProductService->listSavedProducts($request);
+            return $this->responseDataSuccess($listSavedIds);
         }
 
         return $this->responseMessageBadrequest();

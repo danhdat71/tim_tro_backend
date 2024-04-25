@@ -471,4 +471,56 @@ class ProductService
             ->orderBy('posted_at', 'DESC')
             ->paginate(PaginateEnum::PAGINATE_10->value);
     }
+
+    public function productCountByPriceRange($min, $max)
+    {
+        $this->model = Product::class;
+        return $this->model::where('price', '>=', $min)->where('price', '<=', $max)->count();
+    }
+
+    public function getPriceWithProductCount()
+    {
+        return [
+            0 => [
+                'label' => 'Dưới 1 triệu',
+                'id' => '500000,1000000',
+                'products_count' => $this->productCountByPriceRange(500000, 1000000),
+            ],
+            1 => [
+                'label' => 'Từ 1 - 2 triệu',
+                'id' => '1000000,2000000',
+                'products_count' => $this->productCountByPriceRange(1000000, 2000000),
+            ],
+            2 => [
+                'label' => 'Từ 2 - 4 triệu',
+                'id' => '2000000,4000000',
+                'products_count' => $this->productCountByPriceRange(2000000, 4000000),
+            ],
+            3 => [
+                'label' => 'Từ 4 - 6 triệu',
+                'id' => '4000000,6000000',
+                'products_count' => $this->productCountByPriceRange(4000000, 6000000),
+            ],
+            4 => [
+                'label' => 'Từ 6 - 8 triệu',
+                'id' => '6000000,8000000',
+                'products_count' => $this->productCountByPriceRange(6000000, 8000000),
+            ],
+            5 => [
+                'label' => 'Từ 8 - 10 triệu',
+                'id' => '8000000,10000000',
+                'products_count' => $this->productCountByPriceRange(8000000, 10000000),
+            ],
+            6 => [
+                'label' => 'Từ 10 - 12 triệu',
+                'id' => '10000000,12000000',
+                'products_count' => $this->productCountByPriceRange(10000000, 12000000),
+            ],
+            7 => [
+                'label' => 'Trên 12 triệu',
+                'id' => '12000000,20000000',
+                'products_count' => $this->productCountByPriceRange(12000000, 20000000),
+            ],
+        ];
+    }
 }

@@ -114,4 +114,15 @@ class ProductController extends Controller
 
         return $this->responseMessageNotfound();
     }
+
+    public function getPriceWithProductCount()
+    {
+        $result = $this->productService->getPriceWithProductCount();
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
 }
