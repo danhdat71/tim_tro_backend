@@ -53,6 +53,9 @@ class UserProductService
             'acreage',
             'bed_rooms',
             'toilet_rooms',
+            'ward_id',
+            'district_id',
+            'province_id',
         ];
     }
 
@@ -97,8 +100,21 @@ class UserProductService
             ->with([
                 'productImages' => function($q) {
                     $q->select('product_id', 'thumb_url');
-                }
-            ]);
+                },
+                'district' => function($q){
+                    $q->select('id', 'name');
+                },
+                'province' => function($q){
+                    $q->select('id', 'name');
+                },
+                'ward' => function($q){
+                    $q->select('id', 'name');
+                },
+            ])
+            ->when($this->request->order_by != '', function($q) {
+                $orderBy = explode('|', $this->request->order_by);
+                $q->orderBy($orderBy[0], $orderBy[1]);
+            });
 
         if ($this->request->is_all) {
             $list = $list->pluck('id');

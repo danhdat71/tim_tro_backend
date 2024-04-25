@@ -264,8 +264,24 @@ class AuthUserService
 
     public function getMe()
     {
-        $user = Auth::user();
+        $this->model = User::select([
+            'id',
+            'full_name',
+            'avatar',
+            'app_id',
+            'email',
+            'tel',
+            'gender',
+            'user_type',
+            'birthday',
+            'description',
+            'status',
+        ])
+            ->where('id', Auth::user()->id)
+            ->where('status', UserStatusEnum::ACTIVE->value)
+            ->withCount(['userSavedProducts'])
+            ->first();
 
-        return $user;
+        return $this->model;
     }
 }
