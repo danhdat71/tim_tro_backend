@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Enums\BoxLimitEnum;
+use App\Enums\PaginateEnum;
 use App\Models\District;
 use App\Models\Product;
 use App\Models\Province;
@@ -28,6 +29,7 @@ class LocationService
     public function getSelectDistrict()
     {
         return [
+            'id',
             'id as value',
             'name as label',
             'province_id',
@@ -194,5 +196,24 @@ class LocationService
             'district' => $district,
             'wards' => $resultWards,
         ];
+    }
+
+    public function publicDistrictWithCountProducts($request)
+    {
+        $this->district = District::class;
+        $this->request = $request;
+
+        return Cache::remember(
+            'public_district:' . implode(',', $this->request->all()),
+            config('cache.public_location.district'),
+            function () {
+                return $this->district::select($this->getSelectDistrict())
+                    ->withCount('products')
+                    ->orderBy('products_count', 'desc')
+                    ->where('province_id', $this->request->province_id)
+                    ->limit(PaginateEnum::PAGINATE_20->value)
+                    ->get();
+            }
+        );
     }
 }

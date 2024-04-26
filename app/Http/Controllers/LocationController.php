@@ -79,4 +79,15 @@ class LocationController extends Controller
 
         return $this->responseMessageBadrequest();
     }
+
+    public function publicDistrictWithCountProducts(Request $request)
+    {
+        $result = $this->locationService->publicDistrictWithCountProducts($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
 }

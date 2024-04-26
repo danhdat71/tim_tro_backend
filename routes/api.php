@@ -44,6 +44,8 @@ Route::get('provinces', [LocationController::class, 'publicProvinces']);
 Route::get('provinces-with-districts', [LocationController::class, 'publicProvincesWithDistricts']);
 // Search other hostel with price less than current hostel viewing
 Route::get('wards-with-count-products', [LocationController::class, 'publicWardsWithCountProducts']);
+// Get district with product count - Detail product page
+Route::get('districts-with-count-products', [LocationController::class, 'publicDistrictWithCountProducts']);
 Route::post('user/report-product', [UserProductController::class, 'reportProduct'])
     ->middleware(LimitReportMiddleware::class);
 // Get prices with count product

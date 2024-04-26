@@ -388,7 +388,10 @@ class ProductService
                 $orderBy = explode('|', $this->request->order_by);
                 $q->orderBy($orderBy[0], $orderBy[1]);
             })
-            ->paginate(PaginateEnum::PAGINATE_20->value);
+            ->when($this->request->without_id != '', function($q) {
+                $q->where('id', '<>', $this->request->without_id);
+            })
+            ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_20->value);
 
         return $list;
     }
@@ -436,6 +439,7 @@ class ProductService
             'long',
             'posted_at',
             'district_id',
+            'province_id',
         ])
         ->where('slug', $this->request->slug)
         ->where('status', ProductStatusEnum::REALITY->value)
