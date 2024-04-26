@@ -9,6 +9,7 @@ use App\Models\ProductImage;
 use App\Models\UserViewedProduct;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
 
@@ -308,6 +309,9 @@ class ProductService
                 'title',
                 'price',
                 'slug',
+                'status',
+                'detail_address',
+                DB::raw('COUNT(users_viewed_products.created_at) as user_viewed_product_count'),
             ])
             ->with([
                 'productImages' => function($q) {
@@ -316,16 +320,17 @@ class ProductService
                         ->get();
                 },
             ])
-            ->withCount(['userViews'])
-            ->orderBy('created_at', 'desc')
+            ->leftJoin('users_viewed_products', 'users_viewed_products.product_id', 'products.id')
+            ->groupBy(['products.id'])
+            ->orderBy('products.created_at', 'desc')
             ->where('status', $this->request->status)
-            ->where('user_id', $this->request->user()->id ?? null)
+            ->where('products.user_id', $this->request->user()->id ?? null)
             ->paginate(PaginateEnum::PAGINATE_10->value);
 
         return [
             'list' => $products,
-            'draft_count' => Product::where('status', 0)->count(),
-            'total_count' => Product::where('status', 1)->count()
+            'draft_count' => Product::where('status', ProductStatusEnum::DRAFT->value)->count(),
+            'total_count' => Product::where('status', ProductStatusEnum::REALITY->value)->count()
         ];
     }
 
