@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Enums\BoxLimitEnum;
 use App\Models\District;
+use App\Models\Product;
 use App\Models\Province;
 use App\Models\Ward;
 use Illuminate\Support\Facades\Cache;
@@ -12,6 +13,7 @@ class LocationService
     public $province = null;
     public $district = null;
     public $ward = null;
+    public $product = null;
     public $request = null;
 
     public function getSelectProvince()
@@ -147,28 +149,50 @@ class LocationService
 
     public function getWardsWithCountProducts($request)
     {
+        $this->province = Province::class;
         $this->district = District::class;
         $this->ward = Ward::class;
+        $this->product = Product::class;
         $this->request = $request;
-        
-        $district = $this->district::select(['id', 'name'])
-            ->where('id', $this->request->district_id)
-            ->first();
 
-        $wards = $this->ward::select(['id', 'name'])
-            ->withCount([
-                'products' => function($q) {
-                    if ($this->request->has('current_price') && $this->request->current_price != '') {
-                        $q->where('price', '<=', $this->request->current_price);
-                    }
-                }
-            ])
-            ->where('district_id', $this->request->district_id)
-            ->get();
+        $district = Cache::remember('cheaper_district:' . $this->request->district_id, config('cache.location.district'), function() {
+            return $this->district::select(['id', 'name', 'province_id'])
+                ->where('id', $this->request->district_id)
+                ->first();
+        });
+
+        $province = Cache::remember('cheaper_province:' . $district->province_id, config('cache.location.province'), function() use($district) {
+            return $this->province::select(['id', 'name'])
+                ->where('id', $district->province_id)
+                ->first();
+        });
+
+        $wards = Cache::remember('cheaper_ward:' . $this->request->district_id, config('cache.location.province'), function() {
+            return $this->ward::select(['id', 'name'])
+                ->where('district_id', $this->request->district_id)
+                ->get();
+        });
+
+        $resultWards = collect([]);
+        foreach($wards as $ward) {
+            $cheaperProduct = $this->product::where('ward_id', $ward->id)
+                ->where('price', '<=', $this->request->current_price - 100000)
+                ->orderBy('price', 'DESC')
+                ->first();
+
+            if ($cheaperProduct) {
+                $cheaperProductPrice = $cheaperProduct->price ?? 0;
+                $count = $this->product::where('price', $cheaperProductPrice)->where('ward_id', $ward->id)->count();
+                $ward->price = $cheaperProductPrice;
+                $ward->count = $count;
+                $resultWards->push($ward);
+            }
+        }
 
         return [
+            'province' => $province,
             'district' => $district,
-            'wards' => $wards,
+            'wards' => $resultWards,
         ];
     }
 }

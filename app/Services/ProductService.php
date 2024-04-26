@@ -418,8 +418,11 @@ class ProductService
 
         $product = $this->model::select([
             'id',
+            'slug',
+            'title',
             'user_id',
             'price',
+            'acreage',
             'tel',
             'detail_address',
             'is_shared_house',
@@ -432,12 +435,16 @@ class ProductService
             'lat',
             'long',
             'posted_at',
+            'district_id',
         ])
         ->where('slug', $this->request->slug)
         ->where('status', ProductStatusEnum::REALITY->value)
         ->with([
             'user' => function($q) {
-                $q->select(['id', 'full_name', 'avatar', 'created_at']);
+                $q->select(['id', 'app_id', 'full_name', 'avatar', 'created_at']);
+            },
+            'productImages' => function($q) {
+                $q->select(['id', 'product_id', 'url', 'thumb_url']);
             }
         ])
         ->first();
