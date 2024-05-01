@@ -396,6 +396,7 @@ class ProductService
             ->when($this->request->without_id != '', function($q) {
                 $q->where('id', '<>', $this->request->without_id);
             })
+            ->where('status', ProductStatusEnum::REALITY->value)
             ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_20->value);
 
         return $list;
