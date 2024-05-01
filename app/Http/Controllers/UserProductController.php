@@ -41,19 +41,19 @@ class UserProductController extends Controller
 
         if ($result) {
             // Send notification to admin
-            $this->sendMailService->sendMail(
-                env('ADMIN_EMAIL'),
-                NotificationAdminCheckProductReport::class,
-                $request->full_name,
-                $request->email,
-                $request->tel,
-                $result->id, //product_id,
-                $result->user_id, //product user_id,
-                $result->title,
-                $result->posted_at,
-                $request->report_type,
-                $request->description
-            );
+            // $this->sendMailService->sendMail(
+            //     env('ADMIN_EMAIL'),
+            //     NotificationAdminCheckProductReport::class,
+            //     $request->full_name,
+            //     $request->email,
+            //     $request->tel,
+            //     $result->id, //product_id,
+            //     $result->user_id, //product user_id,
+            //     $result->title,
+            //     $result->posted_at,
+            //     $request->report_type,
+            //     $request->description
+            // );
 
             return $this->responseMessageSuccess();
         }

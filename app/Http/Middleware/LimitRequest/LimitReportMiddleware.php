@@ -13,12 +13,17 @@ class LimitReportMiddleware
     use ResponseTrait;
 
     private $maxAttemp = 1; // Limit report
-    private $decay = 172800; // 2 days, Wrong login waiting time (in seconds)
+    private $decay = 259200; // 3 days, Wrong login waiting time (in seconds)
     private $request = null;
 
     public function getThrottleKey()
     {
-        return $this->request->input('product_id') . '.' . $this->request->ip() . '.' . $this->request->path();
+        return
+            $this->request->input('product_id') . '.' .
+            $this->request->ip() . '.' .
+            $this->request->path() . '.' .
+            $this->request->input('tel') . '.' .
+            $this->request->input('email');
     }
 
     public function handle(Request $request, Closure $next): Response

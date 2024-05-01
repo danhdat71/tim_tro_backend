@@ -16,12 +16,13 @@ class UserReportProductRequest extends BaseRequest
                 'min:10',
                 'max:100',
                 'email',
+                'exists:users,email',
             ],
             'tel' => [
                 'required',
                 'min:10',
                 'max:50',
-                'unique:users,tel',
+                'exists:users,tel',
             ],
             'report_type' => [
                 'required',
