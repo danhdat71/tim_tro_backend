@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\LimitRequest;
 
+use App\Models\UserReportProduct;
 use App\Traits\ResponseTrait;
 use Closure;
 use Illuminate\Http\Request;
@@ -12,28 +13,18 @@ class LimitReportMiddleware
 {
     use ResponseTrait;
 
-    private $maxAttemp = 1; // Limit report
-    private $decay = 259200; // 3 days, Wrong login waiting time (in seconds)
     private $request = null;
-
-    public function getThrottleKey()
-    {
-        return
-            $this->request->input('product_id') . '.' .
-            $this->request->ip() . '.' .
-            $this->request->path() . '.' .
-            $this->request->input('tel') . '.' .
-            $this->request->input('email');
-    }
 
     public function handle(Request $request, Closure $next): Response
     {
         $this->request = $request;
-        $key = $this->getThrottleKey();
 
-        $executed = RateLimiter::attempt($key, $this->maxAttemp, function() {}, $this->decay);
+        $count = UserReportProduct::where('product_id', $this->request->product_id)
+            ->where('email', $this->request->email)
+            ->where('tel', $this->request->tel)
+            ->count();
 
-        if (!$executed) {
+        if ($count > 0) {
             return $this->responseMessageBadrequest("Bạn đã báo cáo bài viết này rồi !");
         }
 
