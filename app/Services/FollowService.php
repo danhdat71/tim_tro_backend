@@ -46,8 +46,15 @@ class FollowService
         $this->request = $request;
         $this->model = User::find($this->request->user()->id);
 
-        return $this->model->follow()
-            ->paginate(PaginateEnum::PAGINATE_5->value, $this->selectFollowersAttr());
+        $list = $this->model->follow();
+
+        if ($this->request->is_all) {
+            $list = $list->pluck('id');
+        } else {
+            $list = $list->paginate(PaginateEnum::PAGINATE_5->value, $this->selectFollowersAttr());
+        }
+
+        return $list;
     }
 
     public function follow($request)

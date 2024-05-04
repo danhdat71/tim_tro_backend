@@ -477,6 +477,20 @@ class ProductService
         $this->request = $request;
 
         return $this->model::select($this->getSelectPublicProductAttr())
+            ->with([
+                'productImages' => function($q) {
+                    $q->select('product_id', 'thumb_url');
+                },
+                'district' => function($q){
+                    $q->select('id', 'name');
+                },
+                'province' => function($q){
+                    $q->select('id', 'name');
+                },
+                'ward' => function($q){
+                    $q->select('id', 'name');
+                },
+            ])
             ->leftJoin('users', 'users.id', '=', 'products.user_id')
             ->where('users.app_id', $this->request->app_id)
             ->where('products.status', ProductStatusEnum::REALITY->value)
