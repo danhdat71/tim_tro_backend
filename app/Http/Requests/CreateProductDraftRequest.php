@@ -15,11 +15,11 @@ class CreateProductDraftRequest extends BaseRequest
         $this->request = request();
         return [
             'province_id' => [
-                'nullable',
+                'required',
                 'exists:provinces,id',
             ],
             'district_id' => [
-                'nullable',
+                'required',
                 'exists:districts,id',
                 function($attr, $value, $fail) {
                     $provinceId = $this->request->province_id;
@@ -30,7 +30,7 @@ class CreateProductDraftRequest extends BaseRequest
                 }
             ],
             'ward_id' => [
-                'nullable',
+                'required',
                 'exists:wards,id',
                 function($attr, $value, $fail) {
                     $districtId = $this->request->district_id;

@@ -115,6 +115,32 @@ class ProductService
         ];
     }
 
+    public function getPublicDraftAttributes()
+    {
+        return [
+            'title',
+            'slug',
+            'province_id',
+            'district_id',
+            'ward_id',
+            'price',
+            'description',
+            'tel',
+            'detail_address',
+            'lat',
+            'long',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+            'used_type',
+            'is_shared_house',
+            'time_rule',
+            'is_allow_pet',
+            'user_id',
+            'status',
+        ];
+    }
+
     public function getSelectProductAttr()
     {
         return [
@@ -222,16 +248,18 @@ class ProductService
         $this->request = $request;
         $this->request->status = ProductStatusEnum::DRAFT->value;
         $this->model = new Product;
+        $this->productImage = new ProductImage;
 
         $created = $this->fillDataByFields($this->getStoreDraftAttributes());
 
         // Store images
+        $imageData = [];
         if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
             foreach ($this->request->product_images as $imageFile) {
-                $this->productImage = new ProductImage;
-                $this->storeProductImage($imageFile, $created->id);
+                $imageData[] = $this->storeProductImage($imageFile, $created->id);
             }
         }
+        $this->productImage->insert($imageData);
 
         return $this->getDetailById($created->id);
     }
@@ -296,6 +324,40 @@ class ProductService
         $this->productImage->insert($imageData);
 
         $result = $this->fillDataByFields($this->getUpdateAttributes());
+        return $this->getDetailById($result->id);
+    }
+
+    public function publicDraft($request)
+    {
+        $this->request = $request;
+        $this->request->status = ProductStatusEnum::REALITY->value;
+        $this->model = Product::find($request->product_id);
+        $this->productImage = new ProductImage;
+
+        //When user delete old images
+        if ($this->request->del_product_images != '') {
+            $oldImagesId = explode(',', $this->request->del_product_images);
+            foreach ($oldImagesId as $oldImageId) {
+                $oldImage = ProductImage::where('id', $oldImageId)
+                    ->where('product_id', $this->model->id)
+                    ->first();
+                if ($oldImage) {
+                    Storage::disk('public_path')
+                        ->delete([$oldImage->url ?? '', $oldImage->thumb_url ?? '']);
+                    $oldImage->delete();
+                }
+            }
+        }
+        // When user upload new images
+        $imageData = [];
+        if ($this->request->has('product_images') && sizeof($this->request->product_images) > 0) {
+            foreach ($this->request->product_images as $imageFile) {
+                $imageData[] = $this->storeProductImage($imageFile, $this->model->id);
+            }
+        }
+        $this->productImage->insert($imageData);
+
+        $result = $this->fillDataByFields($this->getPublicDraftAttributes());
         return $this->getDetailById($result->id);
     }
 

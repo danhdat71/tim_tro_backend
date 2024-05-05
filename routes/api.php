@@ -76,6 +76,7 @@ Route::group([
     Route::get('provider/product/list', [ProductController::class, 'listByAuth']);
     Route::post('provider/product/delete', [ProductController::class, 'delete']);
     Route::get('provider/product/detail', [ProductController::class, 'detail']);
+    Route::post('provider/product/public-draft', [ProductController::class, 'publicDraft']);
 
     // Finder
     Route::post('finder/follow', [FollowController::class, 'follow']);

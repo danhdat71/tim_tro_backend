@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateProductDraftRequest;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
+use App\Http\Requests\PublicDraftRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
@@ -37,6 +38,21 @@ class ProductController extends Controller
     public function storeDraft(CreateProductDraftRequest $request)
     {
         $result = $this->productService->storeDraft($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function publicDraft(PublicDraftRequest $request)
+    {
+        if ($request->check) {
+            return $this->responseMessageSuccess('Checked!');
+        }
+
+        $result = $this->productService->publicDraft($request);
 
         if ($result) {
             return $this->responseDataSuccess($result);
