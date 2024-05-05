@@ -124,4 +124,28 @@ class UserProductService
 
         return $list;
     }
+
+    public function listViewedProduct($request)
+    {
+        $this->request = $request;
+        $this->model = User::find($this->request->user()->id);
+
+        return $this->model->userViewedProduct()
+            ->with([
+                'productImages' => function($q) {
+                    $q->select('product_id', 'thumb_url');
+                },
+                'district' => function($q){
+                    $q->select('id', 'name');
+                },
+                'province' => function($q){
+                    $q->select('id', 'name');
+                },
+                'ward' => function($q){
+                    $q->select('id', 'name');
+                },
+            ])
+            ->orderBy('users_viewed_products.created_at', 'desc')
+            ->paginate(PaginateEnum::PAGINATE_10->value, $this->getSelectPublicProductAttr());
+    }
 }

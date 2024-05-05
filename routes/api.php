@@ -68,7 +68,7 @@ Route::group([
     Route::post('provider/update-avatar', [ProviderMypageController::class, 'updateAvatar']);
     Route::post('provider/update-item-info', [ProviderMypageController::class, 'updateItemData']);
     // Provider mypage follower
-    Route::get('provider/followers', [FollowController::class, 'followers']);
+    Route::get('provider/followings', [FollowController::class, 'followers']);
     // Provider product manager
     Route::post('provider/product/store', [ProductController::class, 'store']);
     Route::post('provider/product/store-draft', [ProductController::class, 'storeDraft']);
@@ -80,6 +80,7 @@ Route::group([
     // Finder
     Route::post('finder/follow', [FollowController::class, 'follow']);
     Route::get('finder/followings', [FollowController::class, 'following']);
+    Route::get('finder/viewed-list', [UserProductController::class, 'listViewedProduct']);
 
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
     Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);

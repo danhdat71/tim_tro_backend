@@ -71,4 +71,15 @@ class UserProductController extends Controller
 
         return $this->responseMessageBadrequest();
     }
+
+    public function listViewedProduct(Request $request)
+    {
+        $result = $this->userProductService->listViewedProduct($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
 }
