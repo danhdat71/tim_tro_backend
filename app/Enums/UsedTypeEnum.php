@@ -9,7 +9,8 @@ enum UsedTypeEnum: int
     case SLEEP_BOX = 3;
     case APARTMENT = 4;
     case OFFICE = 5;
-    case OTHER = 6;
+    case TOGETHER = 6;
+    case OTHER = 7;
 
     public static function getKeys()
     {
@@ -19,6 +20,7 @@ enum UsedTypeEnum: int
             self::SLEEP_BOX->value,
             self::APARTMENT->value,
             self::OFFICE->value,
+            self::TOGETHER->value,
             self::OTHER->value,
         ];
     }
