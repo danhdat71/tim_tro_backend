@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\FullTextSearch;
+use App\Traits\FullTextSearchTrait;
 
 class Product extends Model
 {
     use HasFactory;
-    use FullTextSearch;
+    use FullTextSearchTrait;
     
     public $table = 'products';
 

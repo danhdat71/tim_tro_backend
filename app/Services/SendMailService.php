@@ -36,7 +36,7 @@ class SendMailService
             ->info("Starting to send $mailableTemplate to " . implode(',', $to));
 
         // Dispatch send
-        $queueConnection = self::$queueConnection;
+        $queueConnection = self::$queueConnection ?? config('queue.default');
         dispatch(new SendMailJob($to, $mailableTemplate, ...$mailData))
             ->onConnection($queueConnection);
 

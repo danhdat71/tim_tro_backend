@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\PaginateEnum;
 use App\Enums\ProductStatusEnum;
+use App\Mail\NotiFollowerProviderCreateProductMail;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\UserViewedProduct;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
+use App\Services\SendMailService;
 
 class ProductService
 {
@@ -240,7 +242,22 @@ class ProductService
         }
         $this->productImage->insert($imageData);
 
-        return $this->getDetailById($created->id);
+        $detail = $this->getDetailById($created->id);
+
+        // Send notification to following finders
+        $followers = $this->request->user()->followers()->get();
+        foreach ($followers as $follower) {
+            SendMailService::sendMail(
+                $follower->email,
+                NotiFollowerProviderCreateProductMail::class,
+                $detail->title,
+                $follower->full_name,
+                $detail,
+                $detail->user
+            );
+        }
+
+        return $detail;
     }
 
     public function storeDraft($request)
@@ -358,7 +375,22 @@ class ProductService
         $this->productImage->insert($imageData);
 
         $result = $this->fillDataByFields($this->getPublicDraftAttributes());
-        return $this->getDetailById($result->id);
+        $detail = $this->getDetailById($result->id);
+
+        // Send notification to following finders
+        $followers = $this->request->user()->followers()->get();
+        foreach ($followers as $follower) {
+            SendMailService::sendMail(
+                $follower->email,
+                NotiFollowerProviderCreateProductMail::class,
+                $detail->title,
+                $follower->full_name,
+                $detail,
+                $detail->user
+            );
+        }
+
+        return $detail;
     }
 
     public function listByAuth($request)

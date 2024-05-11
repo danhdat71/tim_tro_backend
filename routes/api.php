@@ -6,6 +6,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UserProductController;
+use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
 use App\Http\Middleware\LimitRequest\LimitReportMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -21,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('auth/login', [AuthUserController::class, 'login']);
-    #->middleware(LimitLoginMiddleware::class);
+Route::post('auth/login', [AuthUserController::class, 'login'])
+    ->middleware(LimitLoginMiddleware::class);
 Route::post('auth/register', [AuthUserController::class, 'register']);
 Route::post('auth/resend-otp', [AuthUserController::class, 'resendOTP'])
     ->middleware(SendOTPMiddleware::class);

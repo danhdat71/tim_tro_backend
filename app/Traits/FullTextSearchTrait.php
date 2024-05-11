@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-trait FullTextSearch
+trait FullTextSearchTrait
 {
     protected function fullTextWildcards($term)
     {
