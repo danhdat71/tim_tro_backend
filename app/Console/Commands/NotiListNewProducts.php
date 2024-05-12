@@ -6,13 +6,16 @@ use App\Enums\ProductStatusEnum;
 use App\Enums\UserStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Jobs\NotiListNewProductsJob;
-use App\Models\Product;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class NotiListNewProducts extends Command
 {
+    protected $maxProvinceUserView = 2;
+    protected $maxProductWillBeSent = 10;
+
     /**
      * The name and signature of the console command.
      *
@@ -47,7 +50,7 @@ class NotiListNewProducts extends Command
                 ->join('products', 'products.id', '=', 'users_viewed_products.product_id')
                 ->groupBy('province_id')
                 ->orderBy('viewed_province_num', 'DESC')
-                ->limit(2)
+                ->limit($this->maxProvinceUserView)
                 ->pluck('province_id');
             
             $listNewProducts = DB::table('products')
@@ -70,11 +73,22 @@ class NotiListNewProducts extends Command
                 ->whereIn('products.province_id', $listFinderViewedProvinceId)
                 ->groupBy('products.id')
                 ->orderBy('posted_at', 'DESC')
-                ->limit(10)
+                ->limit($this->maxProductWillBeSent)
                 ->get()
                 ->toArray();
 
-            dispatch(new NotiListNewProductsJob($subject, $finder, $listNewProducts));
+            // Prevent send empty list to finder
+            if (count($listNewProducts) > 0) {
+                dispatch(new NotiListNewProductsJob($subject, $finder, $listNewProducts));
+            }
+
+            // Logging
+            $productIds = [];
+            foreach ($listNewProducts as $product) {
+                array_push($productIds, $product->slug);
+            }
+            Log::channel('cron.noti_list_new_products')
+                ->info('Sent '. count($productIds) . ' products [' . implode(',' . PHP_EOL, $productIds) . '] to user finder id: ' . $finder->id . ' | ' . $finder->email . PHP_EOL);
         }
     }
 }

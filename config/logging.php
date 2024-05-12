@@ -129,7 +129,12 @@ return [
                 'driver' => 'single',
                 'path' => storage_path('logs/cron/clean_cancel_forgot_password_'. date('Y_m_d'). '.log'),
                 'level' => 'debug',
-            ]
+            ],
+            'noti_list_new_products' => [
+                'driver' => 'single',
+                'path' => storage_path('logs/cron/noti_list_new_products_'. date('Y_m_d'). '.log'),
+                'level' => 'debug',
+            ],
         ],
     ],
 
