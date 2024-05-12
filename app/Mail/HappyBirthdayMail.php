@@ -9,23 +9,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NotiListNewProductsMail extends Mailable
+class HappyBirthdayMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject = '';
     public $user;
-    public $listNewProducts;
-    public $isShowFooterHappy = true;
+    public $isShowFooterHappy = false;
 
     /**
-     * Create a new instance.
+     * Create a new message instance.
      */
-    public function __construct($subject, $user, $listNewProducts)
+    public function __construct($user)
     {
-        $this->subject = $subject;
         $this->user = $user;
-        $this->listNewProducts = $listNewProducts;
     }
 
     /**
@@ -34,7 +30,7 @@ class NotiListNewProductsMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: env('APP_NAME') . ' | ' . $this->subject,
+            subject: env('APP_NAME') . ' | Chúc mừng sinh nhật ' . $this->user->full_name,
         );
     }
 
@@ -44,7 +40,7 @@ class NotiListNewProductsMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.noti-list-new-products',
+            view: 'emails.happy-birthday',
         );
     }
 

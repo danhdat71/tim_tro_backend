@@ -15,6 +15,7 @@ class AuthUserRegisterMail extends Mailable
 
     public $otp = null;
     public $fullname = null;
+    public $isShowFooterHappy = true;
 
     /**
      * Create a new message instance.

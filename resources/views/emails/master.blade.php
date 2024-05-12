@@ -16,8 +16,10 @@
         style="max-width:650px;min-width:320px;margin:auto;background: white;border-radius:10px;padding:35px;font-size:16px;font-family:Roboto,Arial;line-height:1.7;"
     >
         @yield('content')
+        @if ($isShowFooterHappy)
         <div style="padding-top: 20px;">Chúc bạn có nhiều sức khỏe và vui vẻ !</div>
         <div>Trân trọng !</div>
+        @endif
     </div>
     <div
         style="font-size: 13px;color:#99aab5;text-align:center;padding:15px 0 20px 0;"

@@ -135,6 +135,11 @@ return [
                 'path' => storage_path('logs/cron/noti_list_new_products_'. date('Y_m_d'). '.log'),
                 'level' => 'debug',
             ],
+            'noti_happy_birthday_user' => [
+                'driver' => 'single',
+                'path' => storage_path('logs/cron/noti_happy_birthday_user_'. date('Y_m_d'). '.log'),
+                'level' => 'debug',
+            ],
         ],
     ],
 

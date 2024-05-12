@@ -22,6 +22,7 @@ class NotificationAdminCheckProductReport extends Mailable
     public $productPostedAt = null;
     public $reportType = null;
     public $description = null;
+    public $isShowFooterHappy = false;
 
     /**
      * Create a new message instance.

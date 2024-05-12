@@ -17,6 +17,7 @@ class NotiFollowerProviderCreateProductMail extends Mailable
     public $finderName = '';
     public $product = null;
     public $provider = null;
+    public $isShowFooterHappy = true;
 
     /**
      * Create a new message instance.

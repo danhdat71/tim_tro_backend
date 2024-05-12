@@ -8,7 +8,7 @@
     >Tổng hợp tin đăng dành cho bạn.</div>
     <div
         style="font-size: 15px; color:rgb(85, 85, 85); line-height:1.3;"
-    >Dưới đây là tổng hợp 10 tin đăng mới nhất có thể bạn đang quan tâm. {{env('APP_ENV')}} cố gắng tìm những tin phù hợp & hữu ích nhất dành cho bạn.</div>
+    >Dưới đây là tổng hợp 10 tin đăng mới nhất có thể bạn đang quan tâm. {{env('APP_NAME')}} cố gắng tìm những tin phù hợp & hữu ích nhất dành cho bạn.</div>
     <div
         style="padding: 15px 0;"
     >
