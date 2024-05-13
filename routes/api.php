@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthUserController;
+use App\Http\Controllers\BugReportController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
@@ -57,6 +58,9 @@ Route::get('location/get-provinces', [LocationController::class, 'getProvinces']
 Route::get('location/get-districts', [LocationController::class, 'getDistricts']);
 Route::get('location/get-wards', [LocationController::class, 'getWards']);
 
+// Bug report
+Route::post('bug-report/store', [BugReportController::class, 'store']);
+
 Route::group([
     'prefix' => '',
     'middleware' => 'auth:sanctum',
@@ -86,4 +90,7 @@ Route::group([
 
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
     Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);
+
+    // Bug Report
+    Route::get('bug-report/list', [BugReportController::class, 'index']);
 });
