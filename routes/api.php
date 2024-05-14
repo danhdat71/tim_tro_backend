@@ -7,6 +7,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UserProductController;
+use App\Http\Middleware\LimitRequest\LimitBugReportRequest;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
 use App\Http\Middleware\LimitRequest\LimitReportMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
@@ -59,7 +60,8 @@ Route::get('location/get-districts', [LocationController::class, 'getDistricts']
 Route::get('location/get-wards', [LocationController::class, 'getWards']);
 
 // Bug report
-Route::post('bug-report/store', [BugReportController::class, 'store']);
+Route::post('bug-report/store', [BugReportController::class, 'store'])
+    ->middleware(LimitBugReportRequest::class);
 
 Route::group([
     'prefix' => '',
@@ -91,6 +93,17 @@ Route::group([
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
     Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);
 
-    // Bug Report
-    Route::get('bug-report/list', [BugReportController::class, 'index']);
+    
+    Route::group([
+        'middleware' => 'role-admin',
+        'prefix' => '/admin',
+    ], function(){
+        // Bug report
+        Route::get('bug-report/list', [BugReportController::class, 'getList']);
+        Route::get('bug-report/{id}', [BugReportController::class, 'getDetail']);
+        Route::post('bug-report/status', [BugReportController::class, 'status']);
+
+        // Product policy report
+        
+    });
 });

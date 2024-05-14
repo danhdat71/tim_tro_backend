@@ -16,6 +16,11 @@ class BugReport extends Model
         'email',
         'description',
         'ip_address',
+        'status',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function bugReportImages()

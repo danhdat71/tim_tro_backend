@@ -20,14 +20,42 @@ class BugReportController extends Controller
         $result = $this->bugReportService->store($request);
 
         if ($result) {
-            return $this->responseMessageSuccess();
+            return $this->responseDataSuccess($result);
         }
 
         return $this->responseMessageBadrequest();
     }
 
-    public function getList()
+    public function getList(Request $request)
     {
-        
+        $result = $this->bugReportService->getList($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function getDetail(Request $request)
+    {
+        $result = $this->bugReportService->getDetail($request->id);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageNotfound();
+    }
+
+    public function status(Request $request)
+    {
+        $result = $this->bugReportService->status($request);
+
+        if ($result) {
+            return $this->responseMessageSuccess();
+        }
+
+        return $this->responseMessageBadrequest();
     }
 }

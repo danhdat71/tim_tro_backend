@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email', 100);
             $table->text('description');
             $table->string('ip_address', 50);
+            $table->tinyInteger('status')
+                ->default(1)
+                ->index()
+                ->comment('1: Waiting, 2: Viewed, 3: Not Fix, 4: Fixed');
             $table->timestamps();
         });
     }

@@ -43,4 +43,12 @@ trait ResponseTrait
             'message' => $message
         ], 404);
     }
+
+    public function responseMessageUnAuthorization($message = 'Unauthorization !')
+    {
+        return response()->json([
+            'status' => 401,
+            'message' => $message
+        ], 401);
+    }
 }

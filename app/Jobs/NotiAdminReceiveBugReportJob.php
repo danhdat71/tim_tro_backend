@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Mail\HappyBirthdayMail;
+use App\Mail\NotiAdminReceiveBugReportMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -10,18 +10,18 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
-class HappyBirthdayJob implements ShouldQueue
+class NotiAdminReceiveBugReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $user;
+    public $bugData;
 
     /**
      * Create a new job instance.
      */
-    public function __construct($user)
+    public function __construct($bugData)
     {
-        $this->user = $user;
+        $this->bugData = $bugData;
     }
 
     /**
@@ -29,7 +29,7 @@ class HappyBirthdayJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->user->email)
-            ->send(new HappyBirthdayMail($this->user));
+        Mail::to(env('ADMIN_EMAIL'))
+            ->send(new NotiAdminReceiveBugReportMail($this->bugData));
     }
 }

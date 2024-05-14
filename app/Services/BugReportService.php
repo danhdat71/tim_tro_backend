@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\BugReportStatusEnum;
+use App\Enums\PaginateEnum;
+use App\Jobs\NotiAdminReceiveBugReport;
+use App\Jobs\NotiAdminReceiveBugReportJob;
+use App\Jobs\NotiReporterBugWasFixedJob;
 use App\Models\BugReport;
 use App\Models\BugReportImage;
 use Illuminate\Support\Str;
@@ -37,6 +42,11 @@ class BugReportService
             'description',
             'ip_address',
         ];
+    }
+
+    public function getSelectBugReportList()
+    {
+        //
     }
 
     public function storeBugReportImages($imageFile, $bugReportId)
@@ -75,7 +85,67 @@ class BugReportService
             }
         }
         $this->bugReportImagesModel->insert($imageData);
+        
+        // Noti to admin new bug created
+        dispatch(new NotiAdminReceiveBugReportJob($created));
 
-        return $created;
+        return $this->getDetail($created->id);
+    }
+
+    public function getList($request)
+    {
+        $this->model = BugReport::class;
+
+        return $this->model::select([
+            'id',
+            'full_name',
+            'email',
+            'ip_address',
+            'status',
+            'created_at',
+        ])
+        ->with([
+            'bugReportImages' => function($q) {
+                $q->select(['id', 'bug_report_id', 'url']);
+            }
+        ])
+        ->paginate(PaginateEnum::PAGINATE_10->value);
+    }
+
+    public function getDetail($id)
+    {
+        $this->model = BugReport::class;
+
+        return $this->model::select([
+            'id',
+            'full_name',
+            'email',
+            'ip_address',
+            'status',
+            'description',
+            'created_at',
+        ])
+        ->with([
+            'bugReportImages' => function($q) {
+                $q->select(['id', 'bug_report_id', 'url']);
+            }
+        ])
+        ->where('id', $id)
+        ->first();
+    }
+
+    public function status($request)
+    {
+        $this->request = $request;
+        $this->model = BugReport::find($this->request->id);
+        $this->model->status = $this->request->status;
+        $this->model->save();
+        $bugData = $this->getDetail($this->model->id);
+
+        if (BugReportStatusEnum::FIXED->value) {
+            dispatch(new NotiReporterBugWasFixedJob($bugData));
+        }
+
+        return $bugData;
     }
 }
