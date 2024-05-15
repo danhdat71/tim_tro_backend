@@ -2,35 +2,32 @@
 
 namespace App\Http\Middleware\LimitRequest;
 
+use App\Models\BugReport;
 use App\Traits\ResponseTrait;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\RateLimiter;
+use Carbon\Carbon;
 
 class LimitBugReportRequest
 {
     use ResponseTrait;
 
-    private $maxAttemp = 5; // Limit wrong
-    private $decay = 600; // Wrong waiting time (in seconds)
     private $request = null;
-
-    public function getThrottleKey()
-    {
-        return $this->request->ip() . '.' . $this->request->path();
-    }
+    private $limitReport = 5;
 
     public function handle(Request $request, Closure $next): Response
     {
         $this->request = $request;
-        $key = $this->getThrottleKey();
 
-        $executed = RateLimiter::attempt($key, $this->maxAttemp, function() {}, $this->decay);
+        $count = BugReport::where('ip_address', $this->request->ip())
+            ->where('email', $this->request->email)
+            ->where('created_at', '>=', Carbon::now()->format('Y-m-d 00:00:00'))
+            ->where('created_at', '<=', Carbon::now()->format('Y-m-d 23:59:59'))
+            ->count();
 
-        if (!$executed) {
-            $seconds = RateLimiter::availableIn($key);
-            return $this->responseMessageBadrequest("Vui lòng thử lại sau $seconds giây");
+        if ($count > $this->limitReport) {
+            return $this->responseMessageBadrequest("Giới hạn báo cáo !");
         }
 
         return $next($request);
