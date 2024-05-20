@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PriceLocaleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\UserProductController;
@@ -62,6 +63,9 @@ Route::get('location/get-wards', [LocationController::class, 'getWards']);
 // Bug report
 Route::post('bug-report/store', [BugReportController::class, 'store'])
     ->middleware(LimitBugReportRequest::class);
+
+// Locale price calculate
+Route::get('/price-locale', [PriceLocaleController::class, 'index']);
 
 Route::group([
     'prefix' => '',
