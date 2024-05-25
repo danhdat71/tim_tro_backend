@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PriceLocaleController;
@@ -106,6 +107,9 @@ Route::group([
         Route::get('bug-report/list', [BugReportController::class, 'getList']);
         Route::get('bug-report/{id}', [BugReportController::class, 'getDetail']);
         Route::post('bug-report/status', [BugReportController::class, 'status']);
+
+        // Dashboard
+        Route::get('dashboard/index', [DashboardController::class, 'index']);
 
         // Product policy report
         

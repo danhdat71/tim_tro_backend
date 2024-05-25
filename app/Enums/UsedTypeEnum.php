@@ -24,4 +24,17 @@ enum UsedTypeEnum: int
             self::OTHER->value,
         ];
     }
+
+    public function getStringValue(): string
+    {
+        return match($this) {
+            self::HOSTEL => 'Phòng trọ',
+            self::FULL_HOUSE => 'Nhà nguyên căn',
+            self::SLEEP_BOX => 'Hộp ngủ',
+            self::APARTMENT => 'Chung cư',
+            self::OFFICE => 'Văn phòng',
+            self::TOGETHER => 'Ở ghép',
+            self::OTHER => 'Khác',
+        };
+    }
 }
