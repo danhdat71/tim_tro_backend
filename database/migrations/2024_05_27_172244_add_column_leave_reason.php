@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('leave_reason')->nullable()->default(null)->after('status');
+            $table->dateTime('leave_at')->nullable()->default(null)->after('leave_reason');
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['leave_reason']);
+            $table->dropColumn(['leave_reason', 'leave_at']);
         });
     }
 };

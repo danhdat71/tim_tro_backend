@@ -294,6 +294,7 @@ class AuthUserService
         // Update data leave
         $this->model->status = UserStatusEnum::LEAVE->value;
         $this->model->leave_reason = $this->request->leave_reason;
+        $this->model->leave_at = Carbon::now();
         $this->model->save();
 
         // Logout all device leave
