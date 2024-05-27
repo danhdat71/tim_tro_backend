@@ -24,6 +24,8 @@ class User extends Authenticatable
         'description',
         'last_login_at',
         'remember_token',
+        'status',
+        'leave_reason',
     ];
 
     protected $hidden = [

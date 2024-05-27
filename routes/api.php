@@ -70,7 +70,7 @@ Route::get('/price-locale', [PriceLocaleController::class, 'index']);
 
 Route::group([
     'prefix' => '',
-    'middleware' => 'auth:sanctum',
+    'middleware' => ['auth:sanctum', 'check-active'],
 ], function(){
     Route::get('/auth/get-me', [AuthUserController::class, 'getMe']);
     Route::post('/auth/logout', [AuthUserController::class, 'logout']);
@@ -98,7 +98,8 @@ Route::group([
     Route::post('user/save-product', [UserProductController::class, 'saveProduct']);
     Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);
 
-    
+    Route::post('user/leave', [AuthUserController::class, 'leaveSystem']);
+
     Route::group([
         'middleware' => 'role-admin',
         'prefix' => '/admin',

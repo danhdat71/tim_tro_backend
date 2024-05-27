@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\UserStatusEnum;
+use App\Jobs\LeaveSystemJob;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -283,5 +284,24 @@ class AuthUserService
             ->first();
 
         return $this->model;
+    }
+
+    public function leaveSystem($request)
+    {
+        $this->request = $request;
+        $this->model = $this->request->user();
+
+        // Update data leave
+        $this->model->status = UserStatusEnum::LEAVE->value;
+        $this->model->leave_reason = $this->request->leave_reason;
+        $this->model->save();
+
+        // Logout all device leave
+        $this->model->tokens()->delete();
+
+        // Job process leave
+        dispatch(new LeaveSystemJob($this->model));
+
+        return true;
     }
 }

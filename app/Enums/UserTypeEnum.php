@@ -16,4 +16,13 @@ enum UserTypeEnum: int
             self::ADMIN->value,
         ];
     }
+
+    public function getStringValue(): string
+    {
+        return match($this) {
+            self::PROVIDER => 'Người đăng tin',
+            self::FINDER => 'Người tìm',
+            self::ADMIN => 'Quản trị viên',
+        };
+    } 
 }

@@ -181,6 +181,7 @@ return [
         'report_type' => 'loại báo cáo',
         'action' => 'hành động',
         'follower_receive_id' => 'id người được follow',
+        'leave_reason' => 'lý do rời',
     ],
 
 ];

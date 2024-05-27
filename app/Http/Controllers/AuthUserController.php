@@ -6,6 +6,7 @@ use App\Enums\UserStatusEnum;
 use App\Http\Requests\AuthUserForgotPasswordRequest;
 use App\Http\Requests\AuthUserRegisterRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\LeaveSystemRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResendOTPRequest;
 use App\Mail\AuthUserRegisterMail;
@@ -177,6 +178,9 @@ class AuthUserController extends Controller
                 'status' => UserStatusEnum::INACTIVE,
             ]);
         }
+        else if ($user && $user->status == UserStatusEnum::LEAVE->value) {
+            return $this->responseMessageUnAuthorization('Tài khoản không tồn tại');
+        }
 
         $result = $this->authUserService->login($request);
 
@@ -204,6 +208,17 @@ class AuthUserController extends Controller
 
         if ($result) {
             return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function leaveSystem(LeaveSystemRequest $request)
+    {
+        $result = $this->authUserService->leaveSystem($request);
+
+        if ($result) {
+            return $this->responseMessageSuccess();
         }
 
         return $this->responseMessageBadrequest();
