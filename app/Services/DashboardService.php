@@ -166,6 +166,35 @@ class DashboardService
         return $result;
     }
 
+    public function leaveCountMonth()
+    {
+        $currentYear = Carbon::now()->format('Y');
+        $result = [];
+
+        for($month = 1; $month <= 12; $month++) {
+            $providerCount = DB::table('users')
+                ->where('user_type', UserTypeEnum::PROVIDER->value)
+                ->where('status', UserStatusEnum::LEAVE->value)
+                ->whereYear('leave_at', $currentYear)
+                ->whereMonth('leave_at', $month)
+                ->count();
+            $finderCount = DB::table('users')
+                ->where('user_type', UserTypeEnum::FINDER->value)
+                ->where('status', UserStatusEnum::LEAVE->value)
+                ->whereYear('leave_at', $currentYear)
+                ->whereMonth('leave_at', $month)
+                ->count();
+
+            array_push($result, [
+                'month' => 'Tháng ' . $month,
+                'provider_count' => $providerCount,
+                'finder_count' => $finderCount,
+            ]);
+        }
+        
+        return $result;
+    }
+
     public function index()
     {
         $userProviderCount = $this->countUser(UserTypeEnum::PROVIDER->value);
@@ -177,6 +206,7 @@ class DashboardService
         $draftRealityCount = $this->draftRealityCount();
         $usedTypeMonth = $this->usedTypeMonth();
         $registerCountMonth = $this->registerCountMonth();
+        $leaveCountMonth = $this->leaveCountMonth();
 
         return [
             'provider_count' => $userProviderCount,
@@ -188,6 +218,7 @@ class DashboardService
             'draft_reality_count' => $draftRealityCount,
             'used_type_month' => $usedTypeMonth,
             'register_count_month' => $registerCountMonth,
+            'leave_count_month' => $leaveCountMonth,
         ];
     }
 }
