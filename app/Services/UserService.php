@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\PaginateEnum;
+use App\Enums\UserStatusEnum;
 use App\Enums\UserTypeEnum;
 use App\Models\User;
 use Intervention\Image\Facades\Image;
@@ -133,5 +135,101 @@ class UserService
         $this->setUserByAuth();
 
         return $this->fillDataByFields($this->updateUserInfoItemKeys());
+    }
+
+    public function adminGetListUsers($request)
+    {
+        $this->request = $request;
+        $this->model = User::class;
+
+        return $this->model::select([
+            'id',
+            'full_name',
+            'avatar',
+            'gender',
+            'user_type',
+            'status',
+            'tel',
+            'email',
+            'created_at',
+        ])
+        ->when($this->request->keyword != "", function($q){
+            $q->where('email', 'like', "%{$this->request->keyword}%");
+            $q->orWhere('full_name', 'like', "%{$this->request->keyword}%");
+            $q->orWhere('tel', 'like', "%{$this->request->keyword}%");
+        })
+        ->when($this->request->status != "", function($q){
+            $q->where('status', $this->request->status);
+        })
+        ->when($this->request->user_type != "", function($q){
+            $q->where('user_type', $this->request->user_type);
+        })
+        ->when($this->request->order_by != "", function($q){
+            $orderByArr = explode('|', $this->request->order_by);
+            $q->orderBy($orderByArr[0], $orderByArr[1]);
+        })
+        ->where('user_type', '<>', UserTypeEnum::ADMIN->value)
+        ->paginate(PaginateEnum::PAGINATE_10->value);
+    }
+
+    public function adminGetDetailUser($request)
+    {
+        $this->request = $request;
+        $this->model = User::class;
+
+        return $this->model::select([
+                'id',
+                'full_name',
+                'avatar',
+                'app_id',
+                'email',
+                'tel',
+                'gender',
+                'user_type',
+                'birthday',
+                'description',
+                'status',
+                'leave_reason',
+                'leave_at',
+                'last_login_at',
+                'created_at',
+            ])
+            ->where('id', $this->request->id)
+            ->first();
+    }
+
+    public function adminUpdateUserStatus($request)
+    {
+        $this->request = $request;
+        $this->model = User::where('id', $this->request->id)->firstOrFail();
+        $this->model->status = $this->request->status;
+
+        // Case leave
+        if ($this->request->status == UserStatusEnum::LEAVE->value) {
+            $this->model->leave_reason = $this->request->reason;
+            $this->model->status_reason = null;
+        }
+        // Case active
+        else if ($this->request->status == UserStatusEnum::ACTIVE->value) {
+            $this->model->leave_reason = null;
+            $this->model->status_reason = null;
+        }
+        // Case block
+        else if ($this->request->status == UserStatusEnum::BLOCKED->value) {
+            $this->model->leave_reason = null;
+            $this->model->status_reason = $this->request->reason;
+        }
+        $this->model->save();
+
+        // Logout user
+        $isKickLogout = in_array($this->request->status, [
+            UserStatusEnum::BLOCKED->value,
+            UserStatusEnum::LEAVE->value,
+        ]);
+        if ( $isKickLogout ) {
+            $this->model->tokens()->delete();
+        }
+
+        return $this->model;
     }
 }

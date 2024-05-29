@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PriceLocaleController;
@@ -110,9 +111,11 @@ Route::group([
         Route::post('bug-report/status', [BugReportController::class, 'status']);
 
         // Dashboard
-        Route::get('dashboard/index', [DashboardController::class, 'index']);
+        Route::get('dashboard/index', [AdminDashboardController::class, 'index']);
 
         // Product policy report
-        
+        Route::get('users/index', [AdminUserController::class, 'index']);
+        Route::get('users/{id}', [AdminUserController::class, 'detailUser']);
+        Route::post('users/status', [AdminUserController::class, 'updateStatus']);
     });
 });

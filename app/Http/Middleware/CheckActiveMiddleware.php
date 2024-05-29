@@ -21,10 +21,14 @@ class CheckActiveMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user() && Auth::user()->status == UserStatusEnum::ACTIVE->value) {
-            return $next($request);
+        if (Auth::user()?->status == UserStatusEnum::INACTIVE->value) {
+            return $this->responseMessageUnAuthorization("Tài khoản không tồn tại");
+        } else if (Auth::user()?->status == UserStatusEnum::LEAVE->value) {
+            return $this->responseMessageUnAuthorization("Tài khoản không tồn tại");
+        } else if (Auth::user()?->status == UserStatusEnum::BLOCKED->value) {
+            return $this->responseMessageUnAuthorization("Tài khoản đã bị khoá");
         }
 
-        return $this->responseMessageUnAuthorization("Tài khoản không tồn tại");
+        return $next($request);
     }
 }

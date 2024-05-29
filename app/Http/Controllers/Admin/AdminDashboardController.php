@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Services\DashboardService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class AdminDashboardController extends Controller
 {
     public DashboardService $dashboardService;
 

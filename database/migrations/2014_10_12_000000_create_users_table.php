@@ -40,7 +40,7 @@ return new class extends Migration
             $table->tinyInteger('status')
                 ->nullable()
                 ->default(0)
-                ->comment('0:inactive, 1:active, 2:leave');
+                ->comment('0:inactive, 1:active, 2:leave, 3:block');
             $table->dateTime('last_login_at')
                 ->nullable()
                 ->default(null);

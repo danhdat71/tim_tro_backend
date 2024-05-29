@@ -26,6 +26,7 @@ class User extends Authenticatable
         'remember_token',
         'status',
         'leave_reason',
+        'reason',
         'leave_at',
     ];
 
