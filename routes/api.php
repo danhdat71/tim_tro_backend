@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
@@ -109,6 +110,9 @@ Route::group([
         Route::get('bug-report/list', [BugReportController::class, 'getList']);
         Route::get('bug-report/{id}', [BugReportController::class, 'getDetail']);
         Route::post('bug-report/status', [BugReportController::class, 'status']);
+
+        // Products
+        Route::get('products/list', [AdminProductController::class, 'getList']);
 
         // Dashboard
         Route::get('dashboard/index', [AdminDashboardController::class, 'index']);

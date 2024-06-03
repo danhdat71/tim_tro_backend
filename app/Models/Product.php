@@ -71,4 +71,9 @@ class Product extends Model
     {
         return $this->hasMany(UserViewedProduct::class, 'product_id', 'id');
     }
+
+    public function userReport()
+    {
+        return $this->hasMany(UserReportProduct::class, 'product_id', 'id');
+    }
 }

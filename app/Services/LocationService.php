@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Enums\BoxLimitEnum;
 use App\Enums\PaginateEnum;
+use App\Enums\ProductStatusEnum;
 use App\Models\District;
 use App\Models\Product;
 use App\Models\Province;
@@ -179,12 +180,13 @@ class LocationService
         foreach($wards as $ward) {
             $cheaperProduct = $this->product::where('ward_id', $ward->id)
                 ->where('price', '<=', $this->request->current_price - 100000)
+                ->where('status', ProductStatusEnum::REALITY->value)
                 ->orderBy('price', 'DESC')
                 ->first();
 
             if ($cheaperProduct) {
                 $cheaperProductPrice = $cheaperProduct->price ?? 0;
-                $count = $this->product::where('price', $cheaperProductPrice)->where('ward_id', $ward->id)->count();
+                $count = $this->product::where('status', ProductStatusEnum::REALITY->value)->where('price', $cheaperProductPrice)->where('ward_id', $ward->id)->count();
                 $ward->price = $cheaperProductPrice;
                 $ward->count = $count;
                 $resultWards->push($ward);

@@ -43,7 +43,7 @@ return new class extends Migration
             $table->dateTime('posted_at')->nullable()->default(null);
             $table->tinyInteger('status')
                 ->default(1)
-                ->comment('0: draft, 1: reality, 2: hidden');
+                ->comment('0: draft, 1: reality, 2: hidden, 3: blocked');
             $table->timestamps();
         });
     }

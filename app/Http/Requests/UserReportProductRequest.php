@@ -7,7 +7,8 @@ class UserReportProductRequest extends BaseRequest
 {
     public function rules(): array
     {
-        return [
+        $this->request = request();
+        $rules = [
             'user_id' => ['nullable', 'exists:users,id'],
             'product_id' => ['required', 'exists:products,id'],
             'full_name' => ['required', 'min:5', 'max:50'],
@@ -28,7 +29,13 @@ class UserReportProductRequest extends BaseRequest
                 'required',
                 'in:' . implode(',', ReportTypeEnum::getKeys()),
             ],
-            'description' => ['required', 'max:5000'],
+            'description' => ['nullable', 'max:5000'],
         ];
+
+        if ($this->request->report_type == ReportTypeEnum::OTHER->value) {
+            $rules['description'] = ['required', 'max:5000'];
+        }
+
+        return $rules;
     }
 }

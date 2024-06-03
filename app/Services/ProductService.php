@@ -433,7 +433,7 @@ class ProductService
         $this->request = $request;
         $this->model = Product::class;
 
-        $list = $this->model::select($this->getSelectPublicProductAttr())
+        return $this->model::select($this->getSelectPublicProductAttr())
             ->with([
                 'productImages' => function($q) {
                     $q->select('product_id', 'thumb_url');
@@ -492,8 +492,6 @@ class ProductService
             })
             ->where('status', ProductStatusEnum::REALITY->value)
             ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_20->value);
-
-        return $list;
     }
 
     public function delete($request)
@@ -647,5 +645,57 @@ class ProductService
                 'products_count' => $this->productCountByPriceRange(12000000, 20000000),
             ],
         ];
+    }
+
+    public function adminGetListProducts($request)
+    {
+        $this->model = Product::class;
+        $this->request = $request;
+
+        return $this->model::select([
+            'products.id',
+            'title',
+            'price',
+            'acreage',
+            'bed_rooms',
+            'toilet_rooms',
+            'ward_id',
+            'district_id',
+            'province_id',
+        ])
+        ->with([
+            'productImages' => function($q) {
+                $q->select('product_id', 'thumb_url');
+            },
+            'district' => function($q){
+                $q->select('id', 'name');
+            },
+            'province' => function($q){
+                $q->select('id', 'name');
+            },
+            'ward' => function($q){
+                $q->select('id', 'name');
+            },
+        ])
+        ->withCount('userReport')
+        ->when($this->request->keyword != '', function($q) {
+            $q->where('title', 'like', "%{$this->request->keyword}%");
+        })
+        ->when($this->request->province_id != '', function($q) {
+            $q->where('province_id', $this->request->province_id);
+        })
+        ->when($this->request->price_range != '', function($q) {
+            $priceRange = explode(',', $this->request->price_range);
+            $q->where('price', '>=', $priceRange[0]);
+            $q->where('price', '<=', $priceRange[1]);
+        })
+        ->when($this->request->order_by != '', function($q) {
+            $orderBy = explode('|', $this->request->order_by);
+            $q->orderBy($orderBy[0], $orderBy[1]);
+        })
+        ->when($this->request->status != '', function($q) {
+            $q->where('status', $this->request->status);
+        })
+        ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_10->value);
     }
 }
