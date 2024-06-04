@@ -7,4 +7,5 @@ enum ProductStatusEnum: int
     case DRAFT = 0;
     case REALITY = 1;
     case HIDDEN = 2;
+    case BLOCKED = 3;
 }

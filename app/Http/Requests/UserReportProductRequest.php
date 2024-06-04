@@ -23,7 +23,6 @@ class UserReportProductRequest extends BaseRequest
                 'required',
                 'min:10',
                 'max:50',
-                'exists:users,tel',
             ],
             'report_type' => [
                 'required',

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\PaginateEnum;
 use App\Enums\ProductStatusEnum;
+use App\Jobs\SendNotiProductPolicyNgJob;
 use App\Mail\NotiFollowerProviderCreateProductMail;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -697,5 +698,71 @@ class ProductService
             $q->where('status', $this->request->status);
         })
         ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_10->value);
+    }
+    
+    public function adminGetDetailProduct($request)
+    {
+        $this->request = $request;
+        $this->model = Product::class;
+
+        return $this->model::select([
+            'id',
+            'slug',
+            'title',
+            'user_id',
+            'price',
+            'acreage',
+            'tel',
+            'detail_address',
+            'is_shared_house',
+            'used_type',
+            'bed_rooms',
+            'toilet_rooms',
+            'time_rule',
+            'is_allow_pet',
+            'description',
+            'lat',
+            'long',
+            'posted_at',
+            'district_id',
+            'province_id',
+            'ward_id',
+        ])
+        ->where('id', $this->request->id)
+        ->with([
+            'user' => function($q) {
+                $q->select(['id', 'app_id', 'full_name', 'avatar', 'created_at']);
+            },
+            'productImages' => function($q) {
+                $q->select(['id', 'product_id', 'url', 'thumb_url']);
+            },
+            'province' => function($q) {
+                $q->select('id', 'name');
+            },
+            'district' => function($q) {
+                $q->select('id', 'name');
+            },
+            'ward' => function($q) {
+                $q->select('id', 'name');
+            },
+        ])
+        ->withCount('userReport')
+        ->firstOrFail();
+    }
+
+    public function adminUpdateProductStatus($request)
+    {
+        $this->request = $request;
+        $this->model = Product::where('id', $this->request->id)->firstOrFail();
+        $this->model->status = $this->request->status;
+        $this->model->save();
+
+        // Case block
+        if ($this->request->status == ProductStatusEnum::BLOCKED->value) {
+            $productAuth = $this->model->user;
+            dispatch(new SendNotiProductPolicyNgJob($this->model, $productAuth));
+        }
+
+        return $this->model;
     }
 }

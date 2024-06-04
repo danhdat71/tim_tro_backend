@@ -25,4 +25,26 @@ class AdminProductController extends Controller
 
         return $this->responseMessageBadrequest();
     }
+
+    public function getDetail(Request $request)
+    {
+        $result = $this->productService->adminGetDetailProduct($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function status(Request $request)
+    {
+        $result = $this->productService->adminUpdateProductStatus($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
 }

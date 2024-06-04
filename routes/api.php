@@ -113,6 +113,8 @@ Route::group([
 
         // Products
         Route::get('products/list', [AdminProductController::class, 'getList']);
+        Route::get('products/{id}', [AdminProductController::class, 'getDetail']);
+        Route::post('products/status', [AdminProductController::class, 'status']);
 
         // Dashboard
         Route::get('dashboard/index', [AdminDashboardController::class, 'index']);
