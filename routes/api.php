@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminProductReportController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
@@ -68,7 +69,7 @@ Route::post('bug-report/store', [BugReportController::class, 'store'])
     ->middleware(LimitBugReportRequest::class);
 
 // Locale price calculate
-Route::get('/price-locale', [PriceLocaleController::class, 'index']);
+Route::get('price-locale', [PriceLocaleController::class, 'index']);
 
 Route::group([
     'prefix' => '',
@@ -115,6 +116,13 @@ Route::group([
         Route::get('products/list', [AdminProductController::class, 'getList']);
         Route::get('products/{id}', [AdminProductController::class, 'getDetail']);
         Route::post('products/status', [AdminProductController::class, 'status']);
+
+        // Product report
+        Route::get('product-report/list', [AdminProductReportController::class, 'getList']);
+        Route::get('product-report/{id}', [AdminProductReportController::class, 'getDetailProductReport']);
+        Route::get('product-report/{id}/list', [AdminProductReportController::class, 'getListReport']);
+        Route::get('product-report/{id}/detail', [AdminProductReportController::class, 'getDetailReport']);
+        Route::post('product-report/status', [AdminProductReportController::class, 'status']);
 
         // Dashboard
         Route::get('dashboard/index', [AdminDashboardController::class, 'index']);

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\PaginateEnum;
+use App\Enums\ReportStatusReadEnum;
 use App\Enums\SyncStatusEnum;
 use App\Models\Product;
 use App\Models\User;
@@ -147,5 +148,101 @@ class UserProductService
             ])
             ->orderBy('users_viewed_products.created_at', 'desc')
             ->paginate(PaginateEnum::PAGINATE_10->value, $this->getSelectPublicProductAttr());
+    }
+
+    public function adminGetListBugReport($request)
+    {
+        $this->request = $request;
+        $this->model = Product::class;
+
+        return $this->model::select([
+            'id',
+            'title',
+            'slug',
+            'status',
+            'posted_at',
+            'district_id',
+            'province_id',
+            'ward_id',
+            'user_id',
+        ])
+        ->whereHas('userReport')
+        ->withCount('userReport')
+        ->with([
+            'productImages' => function($q) {
+                $q->select('product_id', 'thumb_url');
+            },
+            'district' => function($q){
+                $q->select('id', 'name');
+            },
+            'province' => function($q){
+                $q->select('id', 'name');
+            },
+            'ward' => function($q){
+                $q->select('id', 'name');
+            },
+            'user'=> function($q){
+                $q->select('id', 'full_name', 'avatar');
+            },
+        ])
+        ->orderBy('status', 'asc')
+        ->paginate(PaginateEnum::PAGINATE_10->value);
+    }
+
+    public function adminGetDetailProductReport($request)
+    {
+        $this->request = $request;
+        $this->model = Product::class;
+
+        return $this->model::where('id', $this->request->id)
+            ->with([
+                'productImages' => function($q) {
+                    $q->select('product_id', 'url');
+                },
+                'district' => function($q){
+                    $q->select('id', 'name');
+                },
+                'province' => function($q){
+                    $q->select('id', 'name');
+                },
+                'ward' => function($q){
+                    $q->select('id', 'name');
+                },
+                'user'=> function($q){
+                    $q->select('id', 'full_name', 'avatar');
+                },
+            ])
+            ->withCount('userViews', 'userReport')
+            ->firstOrFail();
+    }
+
+    public function adminGetListReport($request)
+    {
+        $this->request = $request;
+        $this->model = UserReportProduct::class;
+
+        return $this->model::select([
+            'id',
+            'full_name',
+            'email',
+            'tel',
+            'is_read',
+            'report_type',
+        ])
+        ->where('product_id', $this->request->id)
+        ->orderBy('is_read', 'asc')
+        ->paginate(PaginateEnum::PAGINATE_10->value);
+    }
+
+    public function adminGetDetailReport($request)
+    {
+        $this->request = $request;
+        $this->model = UserReportProduct::class;
+
+        $result = $this->model::findOrFail($this->request->id);
+        $result->is_read = ReportStatusReadEnum::IS_READ->value;
+        $result->save();
+
+        return $result;
     }
 }
