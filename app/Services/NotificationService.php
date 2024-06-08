@@ -34,20 +34,6 @@ class NotificationService
             ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_10->value);
     }
 
-    public function notificationsUnreadCount($request)
-    {
-        $this->model = Notification::class;
-        $this->request = $request;
-
-        $count = $this->model::where('user_id', $this->request->user()->id)
-            ->where('status', NotificationStatusEnum::UN_READ->value)
-            ->count();
-
-        return [
-            'count' => $count,
-        ];
-    }
-
     public function push($title, $description, $userId = null, $link = null)
     {
         $notification = new Notification;
@@ -90,6 +76,16 @@ class NotificationService
         return;
     }
 
+    public function countUnread($request)
+    {
+        $this->model = Notification::class;
+        $this->request = $request;
+
+        return $this->model::where('user_id', $this->request->user()->id)
+            ->where('status', NotificationStatusEnum::UN_READ->value)
+            ->count();
+    }
+
     public function markRead($request)
     {
         $this->model = Notification::class;
@@ -101,7 +97,9 @@ class NotificationService
         $notification->status = $this->request->status;
         $notification->save();
 
-        return $notification;
+        return [
+            'un_read_count' => $this->countUnread($request),
+        ];
     }
 
     public function markReadAll($request)

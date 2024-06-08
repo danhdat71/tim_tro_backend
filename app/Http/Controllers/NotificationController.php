@@ -25,17 +25,6 @@ class NotificationController extends Controller
         return $this->responseMessageBadrequest();
     }
 
-    public function notificationsUnreadCount(Request $request)
-    {
-        $result = $this->notificationService->notificationsUnreadCount($request);
-
-        if ($result) {
-            return $this->responseDataSuccess($result);
-        }
-
-        return $this->responseMessageBadrequest();
-    }
-
     public function markRead(Request $request)
     {
         $result = $this->notificationService->markRead($request);

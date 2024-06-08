@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\NotificationStatusEnum;
 use App\Enums\UserStatusEnum;
 use App\Jobs\LeaveSystemJob;
 use Illuminate\Support\Str;
@@ -280,7 +281,12 @@ class AuthUserService
         ])
             ->where('id', Auth::user()->id)
             ->where('status', UserStatusEnum::ACTIVE->value)
-            ->withCount(['userSavedProducts'])
+            ->withCount([
+                'userSavedProducts',
+                'notifications' => function($q) {
+                    $q->where('status', NotificationStatusEnum::UN_READ->value);
+                }
+            ])
             ->first();
 
         return $this->model;
