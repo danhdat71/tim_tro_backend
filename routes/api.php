@@ -108,6 +108,7 @@ Route::group([
     Route::get('notifications', [NotificationController::class, 'getList']);
     Route::post('notification/mark-read', [NotificationController::class, 'markRead']);
     Route::post('notification/mark-read-all', [NotificationController::class, 'markReadAll']);
+    Route::post('notification/delete-all', [NotificationController::class, 'deleteAll']);
 
     Route::group([
         'middleware' => 'role-admin',

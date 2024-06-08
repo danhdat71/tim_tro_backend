@@ -112,4 +112,15 @@ class NotificationService
                 'status' => NotificationStatusEnum::READ->value,
             ]);
     }
+
+    public function deleteAll($request)
+    {
+        $this->model = Notification::class;
+        $this->request = $request;
+
+        $this->model::where('user_id', $this->request->user()->id)
+            ->delete(); 
+
+        return true;
+    }
 }

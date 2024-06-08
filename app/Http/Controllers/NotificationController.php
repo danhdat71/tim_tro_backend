@@ -46,4 +46,15 @@ class NotificationController extends Controller
 
         return $this->responseMessageBadrequest();
     }
+
+    public function deleteAll(Request $request)
+    {
+        $result = $this->notificationService->deleteAll($request);
+
+        if ($result) {
+            return $this->responseMessageSuccess();
+        }
+
+        return $this->responseMessageBadrequest();
+    }
 }
