@@ -89,4 +89,29 @@ class NotificationService
 
         return;
     }
+
+    public function markRead($request)
+    {
+        $this->model = Notification::class;
+        $this->request = $request;
+
+        $notification = $this->model::where('id', $this->request->id)
+            ->where('user_id', $this->request->user()->id)
+            ->first();
+        $notification->status = $this->request->status;
+        $notification->save();
+
+        return $notification;
+    }
+
+    public function markReadAll($request)
+    {
+        $this->model = Notification::class;
+        $this->request = $request;
+
+        return $this->model::where('user_id', $this->request->user()->id)
+            ->update([
+                'status' => NotificationStatusEnum::READ->value,
+            ]);
+    }
 }

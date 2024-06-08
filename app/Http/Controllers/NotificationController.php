@@ -35,4 +35,26 @@ class NotificationController extends Controller
 
         return $this->responseMessageBadrequest();
     }
+
+    public function markRead(Request $request)
+    {
+        $result = $this->notificationService->markRead($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function markReadAll(Request $request)
+    {
+        $result = $this->notificationService->markReadAll($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
 }
