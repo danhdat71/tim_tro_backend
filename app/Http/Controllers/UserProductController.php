@@ -39,10 +39,10 @@ class UserProductController extends Controller
             $request['is_all'] = true;
             $listSavedIds = $this->userProductService->listSavedProducts($request);
             $detailProduct = $this->productService->getDetailById($request->product_id);
-            if ($request->action ==  SyncStatusEnum::ATTACH->value) {
+            if ($request->action ==  SyncStatusEnum::ATTACH->value && $request->user()->id != $detailProduct->user_id) {
                 $this->notificationService->checkExistAndPush(
                     "Lượt yêu thích bài đăng {$detailProduct->title}",
-                    "Thành viên {$request->user()->full_name} thêm bài đăng của bạn vào danh sách yêu thích.",
+                    "Thành viên {$request->user()->full_name} vừa thêm bài đăng của bạn vào danh sách yêu thích.",
                     $detailProduct->user_id,
                     "/hostels/{$detailProduct->slug}",
                 );
