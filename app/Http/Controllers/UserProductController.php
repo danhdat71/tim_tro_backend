@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SyncStatusEnum;
 use App\Http\Requests\UserReportProductRequest;
 use App\Http\Requests\UserSavedProductRequest;
 use App\Mail\NotificationAdminCheckProductReport;
+use App\Services\NotificationService;
+use App\Services\ProductService;
 use App\Services\SendMailService;
 use App\Services\UserProductService;
 use Illuminate\Http\Request;
@@ -13,13 +16,19 @@ class UserProductController extends Controller
 {
     public UserProductService $userProductService;
     public SendMailService $sendMailService;
+    public NotificationService $notificationService;
+    public ProductService $productService;
 
     public function __construct(
         UserProductService $userProductService,
-        SendMailService $sendMailService
+        SendMailService $sendMailService,
+        NotificationService $notificationService,
+        ProductService $productService
     ) {
         $this->userProductService = $userProductService;
         $this->sendMailService = $sendMailService;
+        $this->notificationService = $notificationService;
+        $this->productService = $productService;
     }
 
     public function saveProduct(UserSavedProductRequest $request)
@@ -29,6 +38,16 @@ class UserProductController extends Controller
         if ($result) {
             $request['is_all'] = true;
             $listSavedIds = $this->userProductService->listSavedProducts($request);
+            $detailProduct = $this->productService->getDetailById($request->product_id);
+            if ($request->action ==  SyncStatusEnum::ATTACH->value) {
+                $this->notificationService->checkExistAndPush(
+                    "Lượt yêu thích bài đăng {$detailProduct->title}",
+                    "Thành viên {$request->user()->full_name} thêm bài đăng của bạn vào danh sách yêu thích.",
+                    $detailProduct->user_id,
+                    "/hostels/{$detailProduct->slug}",
+                );
+            }
+
             return $this->responseDataSuccess($listSavedIds);
         }
 

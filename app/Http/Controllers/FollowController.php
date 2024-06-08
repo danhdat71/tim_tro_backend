@@ -4,15 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FollowRequest;
 use App\Services\FollowService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class FollowController extends Controller
 {
     public FollowService $followService;
+    public NotificationService $notificationService;
 
-    public function __construct(FollowService $followService)
-    {
+    public function __construct(
+        FollowService $followService,
+        NotificationService $notificationService
+    ) {
         $this->followService = $followService;
+        $this->notificationService = $notificationService;
     }
 
     public function followers(Request $request)
@@ -44,6 +49,14 @@ class FollowController extends Controller
         if ($result) {
             $request->is_all = true;
             $result = $this->followService->getFollowings($request);
+            // Send notification to provider
+            $this->notificationService->checkExistAndPush(
+                "Thành viên {$request->user()->full_name} vừa theo dõi bạn.",
+                "Hãy cập nhật bài viết ngay để mọi người dễ dàng tìm thấy.",
+                $request->follower_receive_id,
+                '/provider/hostel-regist'
+            );
+
             return $this->responseDataSuccess($result);
         }
 
