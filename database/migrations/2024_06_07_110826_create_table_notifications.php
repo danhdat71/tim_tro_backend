@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100);
-            $table->string('description', 255)->nullable()->default(null);
-            $table->tinyInteger('status')->default(0)->comment('0: unread, 1: read');
+            $table->string('title', 100)->index();
+            $table->string('description', 255)->index()->nullable()->default(null);
+            $table->tinyInteger('status')->default(0)->index()->comment('0: unread, 1: read');
             $table->string('link')->nullable()->default(null);
             $table->foreignId('user_id')->nullable()->default(null)->index();
             $table->dateTime('sent_at')->index();

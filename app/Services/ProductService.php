@@ -424,8 +424,10 @@ class ProductService
 
         return [
             'list' => $products,
-            'draft_count' => Product::where('status', ProductStatusEnum::DRAFT->value)->count(),
-            'total_count' => Product::where('status', ProductStatusEnum::REALITY->value)->count()
+            'draft_count' => Product::where('user_id', $this->request->user()->id ?? null)
+                ->where('status', ProductStatusEnum::DRAFT->value)->count(),
+            'total_count' => Product::where('user_id', $this->request->user()->id ?? null)
+                ->where('status', ProductStatusEnum::REALITY->value)->count()
         ];
     }
 

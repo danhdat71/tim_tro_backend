@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PriceLocaleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
@@ -102,6 +103,10 @@ Route::group([
     Route::get('user/list-saved-products', [UserProductController::class, 'listSavedProducts']);
 
     Route::post('user/leave', [AuthUserController::class, 'leaveSystem']);
+
+    // Notification list
+    Route::get('notifications', [NotificationController::class, 'getList']);
+    Route::get('notifications-unread-count', [NotificationController::class, 'notificationsUnreadCount']);
 
     Route::group([
         'middleware' => 'role-admin',

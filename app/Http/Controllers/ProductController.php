@@ -7,17 +7,22 @@ use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
 use App\Http\Requests\PublicDraftRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Services\NotificationService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
     public ProductService $productService;
+    public NotificationService $notificationService;
 
     public function __construct(
-        ProductService $productService
+        ProductService $productService,
+        NotificationService $notificationService
     ) {
         $this->productService = $productService;
+        $this->notificationService = $notificationService;
     }
 
     public function store(CreateProductRequest $request)
@@ -125,6 +130,18 @@ class ProductController extends Controller
         $result = $this->productService->publicDetail($request);
 
         if ($result) {
+            // Send notification to product provider
+            if ($request->user()?->id != $result->user_id) {
+                $viewedUser = $request->user();
+                $notificationDesc = $viewedUser
+                    ? "Thành viên {$viewedUser->full_name} vừa xem bài đăng của bạn"
+                    : 'Vừa có thành viên ẩn danh xem bài đăng của bạn.';
+                $this->notificationService->checkExistAndPush(
+                    'Lượt xem bài đăng: ' . $result->title,
+                    $notificationDesc,
+                    $result->user_id
+                );
+            }
             return $this->responseDataSuccess($result);
         }
 

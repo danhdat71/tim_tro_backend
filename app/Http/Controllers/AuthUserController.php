@@ -12,6 +12,7 @@ use App\Http\Requests\ResendOTPRequest;
 use App\Mail\AuthUserRegisterMail;
 use App\Mail\AuthUserResetPasswordMail;
 use App\Services\AuthUserService;
+use App\Services\NotificationService;
 use App\Services\SendMailService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -26,15 +27,18 @@ class AuthUserController extends Controller
     public AuthUserService $authUserService;
     public SendMailService $sendMailService;
     public UserService $userService;
+    public NotificationService $notificationService;
 
     public function __construct(
         AuthUserService $authUserService,
         SendMailService $sendMailService,
-        UserService $userService
+        UserService $userService,
+        NotificationService $notificationService
     ) {
         $this->authUserService = $authUserService;
         $this->sendMailService = $sendMailService;
         $this->userService = $userService;
+        $this->notificationService = $notificationService;
     }
 
     public function register(AuthUserRegisterRequest $request)
@@ -98,6 +102,12 @@ class AuthUserController extends Controller
         $result = $this->authUserService->verifyOTP($request);
 
         if ($result) {
+            // Send notification to created user
+            $this->notificationService->push(
+                'Tạo tài khoản thành công !',
+                'Chào mừng bạn đã đến với hệ thống tìm trọ ' . env('APP_NAME'),
+                $result->id
+            );
             return $this->responseDataSuccess($result);
         }
 
