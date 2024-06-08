@@ -7,6 +7,7 @@ use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\DeleteProductRequest;
 use App\Http\Requests\PublicDraftRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Services\FollowService;
 use App\Services\NotificationService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
@@ -16,13 +17,16 @@ class ProductController extends Controller
 {
     public ProductService $productService;
     public NotificationService $notificationService;
+    public FollowService $followService;
 
     public function __construct(
         ProductService $productService,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        FollowService $followService
     ) {
         $this->productService = $productService;
         $this->notificationService = $notificationService;
+        $this->followService = $followService;
     }
 
     public function store(CreateProductRequest $request)
@@ -34,6 +38,14 @@ class ProductController extends Controller
         $result = $this->productService->store($request);
 
         if ($result) {
+            // Notification to follers
+            $followersOfProvider = $this->followService->getFollowerIdsOfProvider($request);
+            $this->notificationService->pushManyUsers(
+                "Tin mới: {$result->title}",
+                "Thành viên {$request->user()->full_name} vừa đăng tin mới có thể bạn quan tâm.",
+                $followersOfProvider,
+                "/hostels/{$result->slug}"
+            );
             return $this->responseDataSuccess($result);
         }
 
@@ -60,6 +72,15 @@ class ProductController extends Controller
         $result = $this->productService->publicDraft($request);
 
         if ($result) {
+            // Notification to follers
+            $followersOfProvider = $this->followService->getFollowerIdsOfProvider($request);
+            $this->notificationService->pushManyUsers(
+                "Tin mới: {$result->title}",
+                "Thành viên {$request->user()->full_name} vừa đăng tin mới có thể bạn quan tâm.",
+                $followersOfProvider,
+                "/hostels/{$result->slug}"
+            );
+
             return $this->responseDataSuccess($result);
         }
 
@@ -139,7 +160,8 @@ class ProductController extends Controller
                 $this->notificationService->checkExistAndPush(
                     'Lượt xem bài đăng: ' . $result->title,
                     $notificationDesc,
-                    $result->user_id
+                    $result->user_id,
+                    "/hostels/{$result->slug}"
                 );
             }
             return $this->responseDataSuccess($result);

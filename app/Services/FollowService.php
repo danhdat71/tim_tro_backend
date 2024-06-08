@@ -57,6 +57,14 @@ class FollowService
         return $list;
     }
 
+    public function getFollowerIdsOfProvider($request)
+    {
+        $this->request = $request;
+        $this->model = User::find($this->request->user()->id);
+
+        return $this->request->user()->followers()->pluck('id');
+    }
+
     public function follow($request)
     {
         $this->request = $request;

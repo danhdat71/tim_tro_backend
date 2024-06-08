@@ -48,14 +48,14 @@ class NotificationService
         ];
     }
 
-    public function push($title, $description, $user_id = null, $link = null)
+    public function push($title, $description, $userId = null, $link = null)
     {
         $notification = new Notification;
         $notification->title = $title;
         $notification->description = $description;
         $notification->sent_at = Carbon::now()->format('Y-m-d H:i:s');
-        if ($user_id) {
-            $notification->user_id = $user_id;
+        if ($userId) {
+            $notification->user_id = $userId;
         }
         if ($link) {
             $notification->link = $link;
@@ -63,6 +63,15 @@ class NotificationService
         $notification->save();
 
         return $notification;
+    }
+
+    public function pushManyUsers($title, $description, $userIds = [], $link = null)
+    {
+        foreach ($userIds as $userId) {
+            $this->push($title, $description, $userId, $link);
+        }
+
+        return true;
     }
 
     public function checkExistAndPush($title, $description, $user_id = null, $link = null)

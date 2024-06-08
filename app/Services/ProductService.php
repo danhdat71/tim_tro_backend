@@ -141,6 +141,7 @@ class ProductService
             'is_allow_pet',
             'user_id',
             'status',
+            'posted_at',
         ];
     }
 
@@ -349,6 +350,7 @@ class ProductService
     {
         $this->request = $request;
         $this->request->status = ProductStatusEnum::REALITY->value;
+        $this->request->posted_at = Carbon::now()->toDateTimeString();
         $this->model = Product::find($request->product_id);
         $this->productImage = new ProductImage;
 
@@ -493,6 +495,7 @@ class ProductService
             ->when($this->request->without_id != '', function($q) {
                 $q->where('id', '<>', $this->request->without_id);
             })
+            ->orderBy('posted_at', 'desc')
             ->where('status', ProductStatusEnum::REALITY->value)
             ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_20->value);
     }
