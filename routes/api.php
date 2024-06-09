@@ -12,6 +12,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PriceLocaleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderMypageController;
+use App\Http\Controllers\PublicCounterController;
 use App\Http\Controllers\UserProductController;
 use App\Http\Middleware\LimitRequest\LimitBugReportRequest;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
@@ -71,6 +72,9 @@ Route::post('bug-report/store', [BugReportController::class, 'store'])
 
 // Locale price calculate
 Route::get('price-locale', [PriceLocaleController::class, 'index']);
+
+// Homepage counter system
+Route::get('system-counter', [PublicCounterController::class, 'index']);
 
 Route::group([
     'prefix' => '',

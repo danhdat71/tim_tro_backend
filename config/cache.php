@@ -119,4 +119,5 @@ return [
         'ward' => 600, //seconds, 5 minutes
     ],
 
+    'system_count' => 172800 //seconds, 2 days
 ];
