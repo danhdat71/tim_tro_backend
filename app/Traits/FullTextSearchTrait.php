@@ -12,8 +12,7 @@ trait FullTextSearchTrait
 
         foreach ($words as $key => $word) {
             if (strlen($word) >= 1) {
-                //$words[$key] = '+' . $word . '*';
-                $words[$key] = $word;
+                $words[$key] = '+' . $word . '*';
             }
         }
         $searchTerm = implode(' ', $words);

@@ -38,7 +38,6 @@ class Product extends Model
 
     protected $searchable = [
         'title',
-        'description',
         'detail_address',
     ];
 
