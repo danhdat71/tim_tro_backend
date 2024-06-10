@@ -215,7 +215,7 @@ class ProductService
         $img = Image::make($imageFile);
         $img->save($imageFullPath, 100);
         $img = Image::make($imageFile);
-        $img->fit(config('image.product.thumb.width'), config('image.product.thumb.height'));
+        $img->orientate()->fit(config('image.product.thumb.width'), config('image.product.thumb.height'));
         $img->save($imageFullPathThumb, config('image.product.thumb.quality'));
 
         return [

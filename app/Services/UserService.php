@@ -117,7 +117,7 @@ class UserService
 
         $file = $this->request->file('avatar');
         $img = Image::make($file);
-        $img->fit(config('image.user_avatar.width'), config('image.user_avatar.height'));
+        $img->orientate()->fit(config('image.user_avatar.width'), config('image.user_avatar.height'));
         $img->save($avatarFullPath, config('image.user_avatar.quality'));
 
         // Update data

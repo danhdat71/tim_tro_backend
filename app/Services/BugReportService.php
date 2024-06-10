@@ -60,7 +60,7 @@ class BugReportService
         }
 
         $img = Image::make($imageFile);
-        $img->save($imageFullPath, 100);
+        $img->orientate()->save($imageFullPath, 100);
 
         return [
             'url' => $imageFullPath,
