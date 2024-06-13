@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('img_url');
             $table->string('organization')->nullable()->default(null);
+            $table->string('link')->nullable()->default(null);
             $table->tinyInteger('type')->comment('1: TOP_HEAD, 2: SIDE_LEFT, 3: SIDE_RIGHT, 4: OTHER')->index();
             $table->tinyInteger('status')->comment('1: Showing, 0: Hidden')->index();
-            $table->dateTime('expired_at');
+            $table->dateTime('expired_at')->index();
             $table->timestamps();
         });
     }

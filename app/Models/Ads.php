@@ -13,6 +13,7 @@ class Ads extends Model
     protected $fillable = [
         'img_url',
         'organization',
+        'link',
         'type',
         'status',
         'expired_at',

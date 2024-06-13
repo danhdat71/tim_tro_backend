@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminProductReportController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\AdsController;
 use App\Http\Controllers\AuthUserController;
 use App\Http\Controllers\BugReportController;
 use App\Http\Controllers\FollowController;
@@ -76,6 +77,10 @@ Route::get('price-locale', [PriceLocaleController::class, 'index']);
 // Homepage counter system
 Route::get('system-counter', [PublicCounterController::class, 'index']);
 
+// Public ads
+Route::get('public-ads', [AdsController::class, 'getPublicList']);
+Route::post('ads/click', [AdsController::class, 'click']);
+
 Route::group([
     'prefix' => '',
     'middleware' => ['auth:sanctum', 'check-active'],
@@ -142,5 +147,8 @@ Route::group([
         Route::get('users/index', [AdminUserController::class, 'index']);
         Route::get('users/{id}', [AdminUserController::class, 'detailUser']);
         Route::post('users/status', [AdminUserController::class, 'updateStatus']);
+
+        // Ads
+        Route::post('ads/create', [AdsController::class, 'create']);
     });
 });

@@ -16,7 +16,29 @@ class AdsController extends Controller
 
     public function getPublicList(Request $request)
     {
-        $result = $this->adsService->getPublicList();
+        $result = $this->adsService->getPublicList($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+        
+        return $this->responseMessageBadrequest();
+    }
+
+    public function create(Request $request)
+    {
+        $result = $this->adsService->create($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+        
+        return $this->responseMessageBadrequest();
+    }
+
+    public function click(Request $request)
+    {
+        $result = $this->adsService->click($request);
 
         if ($result) {
             return $this->responseDataSuccess($result);
