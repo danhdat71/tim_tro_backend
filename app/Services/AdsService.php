@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Enums\AdsStatusEnum;
+use App\Enums\AdsTypeEnum;
+use App\Enums\PaginateEnum;
 use App\Models\Ads;
 use App\Models\AdsAccess;
 use Carbon\Carbon;
@@ -15,6 +17,15 @@ class AdsService
 {
     public $model = null;
     public $request = null;
+
+    public function getPublicListAttr()
+    {
+        return [
+            'id',
+            'img_url',
+            'link',
+        ];
+    }
 
     public function getCreateAttr()
     {
@@ -52,17 +63,33 @@ class AdsService
         $this->model = Ads::class;
         $this->request = $request;
 
-        return $this->model::select([
-            'id',
-            'img_url',
-            'link',
-        ])
-        ->where('status', AdsStatusEnum::SHOW->value)
-        ->where('expired_at', '>=', Carbon::now())
-        ->when($request->type != '', function($q){
-            $q->where('type', $this->request->type);
-        })
-        ->get();
+        $sideLeft = $this->model::select($this->getPublicListAttr())
+            ->where('status', AdsStatusEnum::SHOW->value)
+            ->where('expired_at', '>=', Carbon::now())
+            ->where('type', AdsTypeEnum::SIDE_LEFT->value)
+            ->inRandomOrder()
+            ->first();
+        
+        $sideRight = $this->model::select($this->getPublicListAttr())
+            ->where('status', AdsStatusEnum::SHOW->value)
+            ->where('expired_at', '>=', Carbon::now())
+            ->where('type', AdsTypeEnum::SIDE_RIGHT->value)
+            ->inRandomOrder()
+            ->first();
+
+        $topHead = $this->model::select($this->getPublicListAttr())
+            ->where('status', AdsStatusEnum::SHOW->value)
+            ->where('expired_at', '>=', Carbon::now())
+            ->where('type', AdsTypeEnum::TOP_HEAD->value)
+            ->inRandomOrder()
+            ->limit(PaginateEnum::PAGINATE_10->value)
+            ->get();
+
+        return [
+            'side_left' => $sideLeft,
+            'side_right' => $sideRight,
+            'top_head' => $topHead,
+        ];
     }
 
     public function storeAdsImage($imageFile)
