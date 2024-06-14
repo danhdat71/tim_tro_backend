@@ -46,4 +46,15 @@ class AdsController extends Controller
         
         return $this->responseMessageBadrequest();
     }
+
+    public function updateStatus(Request $request)
+    {
+        $result = $this->adsService->updateStatus($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+        
+        return $this->responseMessageBadrequest();
+    }
 }

@@ -104,4 +104,14 @@ class AdsService
 
         return $this->fillDataByFields($this->getClickAttr());
     }
+
+    public function updateStatus($request)
+    {
+        $this->request = $request;
+        $this->model = Ads::find($request->id);
+        $this->model->status = $this->request->status;
+        $this->model->save();
+
+        return $this->model;
+    }
 }

@@ -150,5 +150,6 @@ Route::group([
 
         // Ads
         Route::post('ads/create', [AdsController::class, 'create']);
+        Route::post('ads/status', [AdsController::class, 'updateStatus']);
     });
 });
