@@ -16,6 +16,7 @@ use App\Http\Controllers\ProviderMypageController;
 use App\Http\Controllers\PublicCounterController;
 use App\Http\Controllers\UserProductController;
 use App\Http\Middleware\LimitRequest\LimitBugReportRequest;
+use App\Http\Middleware\LimitRequest\LimitClickAdsMiddleware;
 use App\Http\Middleware\LimitRequest\LimitLoginMiddleware;
 use App\Http\Middleware\LimitRequest\LimitReportMiddleware;
 use App\Http\Middleware\LimitRequest\SendOTPMiddleware;
@@ -79,7 +80,8 @@ Route::get('system-counter', [PublicCounterController::class, 'index']);
 
 // Public ads
 Route::get('public-ads', [AdsController::class, 'getPublicList']);
-Route::post('ads/click', [AdsController::class, 'click']);
+Route::post('ads/click', [AdsController::class, 'click'])
+    ->middleware(LimitClickAdsMiddleware::class);
 
 Route::group([
     'prefix' => '',
