@@ -40,7 +40,7 @@ class CreateProductRequest extends BaseRequest
                     }
                 }
             ],
-            'title' => ['required', 'min:10', 'max:50',],
+            'title' => ['required', 'min:10', 'max:100'],
             'price' => ['required', 'integer', 'min:500000', 'max:20000000'],
             'description' => ['required', 'max:5000'],
             'tel' => ['required', 'digits_between:10,20'],
