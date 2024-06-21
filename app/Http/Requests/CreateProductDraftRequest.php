@@ -40,7 +40,7 @@ class CreateProductDraftRequest extends BaseRequest
                     }
                 }
             ],
-            'title' => ['required', 'max:50',],
+            'title' => ['required', 'max:100'],
             'price' => ['required', 'integer', 'max:20000000'],
             'description' => ['nullable', 'max:5000'],
             'tel' => ['required', 'digits_between:0,20'],

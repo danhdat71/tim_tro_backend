@@ -17,8 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('ward_id')->index();
             $table->unsignedBigInteger('province_id')->index();
             $table->unsignedBigInteger('district_id')->index();
-
-
             $table->string('title', 100)->index();
             $table->string('slug', 255)->index();
             $table->integer('price')->index();
