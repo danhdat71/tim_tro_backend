@@ -1,13 +1,18 @@
 <?php
 
 namespace App\Services;
+
 use App\Enums\NotificationStatusEnum;
 use App\Enums\PaginateEnum;
 use App\Models\Notification;
+use App\Models\UserFcmToken;
 use Carbon\Carbon;
+use App\Traits\NotificationTrait;
 
 class NotificationService
 {
+    use NotificationTrait;
+
     public $model = null;
     public $request = null;
 
@@ -122,5 +127,45 @@ class NotificationService
             ->delete(); 
 
         return true;
+    }
+
+    public function storeFcmToken($request)
+    {
+        $this->request = $request;
+        $this->model = UserFcmToken::class;
+
+        if ($this->request->user() && $this->request->fcm_token != '') {
+            $this->model::firstOrCreate(
+                [
+                    'fcm_token' => $this->request->fcm_token,
+                    'user_id' => $this->request->user()->id,
+                ],
+                [
+                    'fcm_token' => $this->request->fcm_token,
+                ]
+            );
+
+            return $this->request->fcm_token;
+        }
+
+        return null;
+    }
+
+    public function removeFcmToken($fcmToken)
+    {
+        $this->model = UserFcmToken::class;
+
+        return $this->model::where('fcm_token', $fcmToken)->delete();
+    }
+
+    public function testPushNotification($tokens)
+    {
+        $data = [
+            'title' => 'Test',
+            'body' => 'Test',
+            'image' => 'http://localhost:9000/assets/imgs/user_id_3/product_5/thumb_image_20240621213850cRvBfAECTL.jpg',
+        ];
+
+        return $this->sendNotificationToMultiple($tokens, $data);
     }
 }

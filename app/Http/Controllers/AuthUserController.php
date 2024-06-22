@@ -206,6 +206,7 @@ class AuthUserController extends Controller
         $result = $this->authUserService->logout($request);
 
         if ($result) {
+            $this->notificationService->removeFcmToken($request->fcm_token);
             return $this->responseMessageSuccess();
         }
 

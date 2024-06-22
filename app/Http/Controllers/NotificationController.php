@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFcmTokenRequest;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
@@ -53,6 +54,28 @@ class NotificationController extends Controller
 
         if ($result) {
             return $this->responseMessageSuccess();
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function storeFcmToken(StoreFcmTokenRequest $request)
+    {
+        $result = $this->notificationService->storeFcmToken($request);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
+        }
+
+        return $this->responseMessageBadrequest();
+    }
+
+    public function testPushNotification(Request $request)
+    {
+        $result = $this->notificationService->testPushNotification($request->tokens);
+
+        if ($result) {
+            return $this->responseDataSuccess($result);
         }
 
         return $this->responseMessageBadrequest();

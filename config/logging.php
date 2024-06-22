@@ -141,6 +141,12 @@ return [
                 'level' => 'debug',
             ],
         ],
+
+        'fcm_notification' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/fcm_notification/fcm_notification_'. date('Y_m_d'). '.log'),
+            'level' => 'debug',
+        ],
     ],
 
 ];

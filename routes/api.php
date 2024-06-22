@@ -115,11 +115,13 @@ Route::group([
 
     Route::post('user/leave', [AuthUserController::class, 'leaveSystem']);
 
-    // Notification list
+    // Notification
     Route::get('notifications', [NotificationController::class, 'getList']);
     Route::post('notification/mark-read', [NotificationController::class, 'markRead']);
     Route::post('notification/mark-read-all', [NotificationController::class, 'markReadAll']);
     Route::post('notification/delete-all', [NotificationController::class, 'deleteAll']);
+    Route::post('notification/store-fcm-token', [NotificationController::class, 'storeFcmToken']);
+    Route::post('notification/test', [NotificationController::class, 'testPushNotification']);
 
     Route::group([
         'middleware' => 'role-admin',
