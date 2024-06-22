@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\NotificationStatusEnum;
 use App\Enums\PaginateEnum;
+use App\Jobs\SendFirebaseNotificationJob;
 use App\Models\Notification;
 use App\Models\UserFcmToken;
 use Carbon\Carbon;
@@ -39,7 +40,7 @@ class NotificationService
             ->paginate($this->request->limit ?? PaginateEnum::PAGINATE_10->value);
     }
 
-    public function push($title, $description, $userId = null, $link = null)
+    public function push($title, $description, $userId = null, $link = null, $imageUrl = null)
     {
         $notification = new Notification;
         $notification->title = $title;
@@ -52,6 +53,18 @@ class NotificationService
             $notification->link = $link;
         }
         $notification->save();
+
+        // dispatch push firebase notification
+        dispatch(
+            new SendFirebaseNotificationJob(
+                [
+                    'title' => $notification->title,
+                    'body' => $notification->description,
+                    'image' => $imageUrl
+                ],
+                $userId
+            )
+        );
 
         return $notification;
     }
@@ -163,7 +176,7 @@ class NotificationService
         $data = [
             'title' => 'Test',
             'body' => 'Test',
-            'image' => 'http://localhost:9000/assets/imgs/user_id_3/product_5/thumb_image_20240621213850cRvBfAECTL.jpg',
+            'image' => null,
         ];
 
         return $this->sendNotificationToMultiple($tokens, $data);

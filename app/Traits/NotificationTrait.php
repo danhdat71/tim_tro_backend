@@ -10,11 +10,9 @@ use Throwable;
 
 trait NotificationTrait
 {
-    public $messaging;
-
-    public function __construct()
+    public function getMessaging()
     {
-        $this->messaging = (new Factory)
+        return (new Factory)
             ->withServiceAccount(base_path().'/config/google/config.json')
             ->createMessaging();
     }
@@ -52,22 +50,22 @@ trait NotificationTrait
      *  'img' => 'Your image'
      * ]
      * **/
-    function sendNotificationToMultiple($tokens, $notificationData)
+    function sendNotificationToMultiple($deviceTokens, $notificationData)
     {
         try {
             $message = CloudMessage::new()
                 ->withNotification($notificationData);
-            $result = $this->messaging->sendMulticast($message, $tokens);
+            $result = $this->getMessaging()->sendMulticast($message, $deviceTokens);
             Log::channel('fcm_notification')
                 ->info(
-                    'Sent ' . json_encode($notificationData) . " to tokens: \n" . $this->formatDeviceTokens(implode(',', $tokens)) .
+                    'Sent ' . json_encode($notificationData) . " to tokens: \n" . $this->formatDeviceTokens(implode(',', $deviceTokens)) .
                     "\nWith [Success: {$result->successes()->count()}, Failed: {$result->failures()->count()}]\n"
                 );
 
             return true;
         } catch (Throwable $th) {
             Log::channel('fcm_notification')->info(
-                'Sent failed ' . $notificationData . 'to ' . $tokens . "with detail error: \n"
+                'Sent failed ' . json_encode($notificationData) . 'to ' . implode(',', $deviceTokens) . "with detail error: \n"
                 . $th->getMessage()
             );
 
