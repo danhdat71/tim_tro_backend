@@ -58,14 +58,14 @@ trait NotificationTrait
             $result = $this->getMessaging()->sendMulticast($message, $deviceTokens);
             Log::channel('fcm_notification')
                 ->info(
-                    'Sent ' . json_encode($notificationData) . " to tokens: \n" . $this->formatDeviceTokens(implode(',', $deviceTokens)) .
+                    'Sent ' . json_encode($notificationData, JSON_UNESCAPED_UNICODE) . " to tokens: \n" . $this->formatDeviceTokens(implode(',', $deviceTokens)) .
                     "\nWith [Success: {$result->successes()->count()}, Failed: {$result->failures()->count()}]\n"
                 );
 
             return true;
         } catch (Throwable $th) {
             Log::channel('fcm_notification')->info(
-                'Sent failed ' . json_encode($notificationData) . 'to ' . implode(',', $deviceTokens) . "with detail error: \n"
+                'Sent failed ' . json_encode($notificationData, JSON_UNESCAPED_UNICODE) . 'to ' . implode(',', $deviceTokens) . "with detail error: \n"
                 . $th->getMessage()
             );
 

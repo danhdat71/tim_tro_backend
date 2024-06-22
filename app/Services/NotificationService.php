@@ -58,7 +58,7 @@ class NotificationService
         dispatch(
             new SendFirebaseNotificationJob(
                 [
-                    'title' => $notification->title,
+                    'title' => env('APP_NAME') . " | " . $notification->title,
                     'body' => $notification->description,
                     'image' => $imageUrl
                 ],
