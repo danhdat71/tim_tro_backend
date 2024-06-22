@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Log;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\WebPushConfig;
 use Kreait\Firebase\Factory;
 use Throwable;
 // use Google_Client;
@@ -53,9 +54,22 @@ trait NotificationTrait
     function sendNotificationToMultiple($deviceTokens, $notificationData)
     {
         try {
-            $message = CloudMessage::new()
-                ->withNotification($notificationData);
-            $result = $this->getMessaging()->sendMulticast($message, $deviceTokens);
+            $messaging = $this->getMessaging();
+            $message = CloudMessage::new();
+            $config = WebPushConfig::fromArray([
+                'notification' => [
+                    'title' => $notificationData['title'],
+                    'body' => $notificationData['body'],
+                    'icon' => $notificationData['icon'] ?? env('APP_URL') . '/assets/imgs/logo-small.png',
+                    'image' => $notificationData['image'] ?? null,
+                ],
+                'fcm_options' => [
+                    'link' => $notificationData['link'] ?? null,
+                ],
+            ]);
+            $message = $message->withWebPushConfig($config);
+            $result = $messaging->sendMulticast($message, $deviceTokens);
+
             Log::channel('fcm_notification')
                 ->info(
                     'Sent ' . json_encode($notificationData, JSON_UNESCAPED_UNICODE) . " to tokens: \n" . $this->formatDeviceTokens(implode(',', $deviceTokens)) .

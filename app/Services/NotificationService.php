@@ -176,7 +176,8 @@ class NotificationService
         $data = [
             'title' => 'Test',
             'body' => 'Test',
-            'image' => null,
+            'image' => 'http://172.20.10.4:9000/assets/imgs/user_id_1/product_7/thumb_image_20240622151146z5IuExqyAN.jpg',
+            'link' => 'https://google.com'
         ];
 
         return $this->sendNotificationToMultiple($tokens, $data);
