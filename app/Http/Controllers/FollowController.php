@@ -50,12 +50,14 @@ class FollowController extends Controller
             $request->is_all = true;
             $result = $this->followService->getFollowings($request);
             // Send notification to provider
-            $this->notificationService->checkExistAndPush(
-                "Thành viên {$request->user()->full_name} vừa theo dõi bạn.",
-                "Hãy cập nhật bài viết ngay để mọi người dễ dàng tìm thấy.",
-                $request->follower_receive_id,
-                '/provider/hostel-regist'
-            );
+            if ($request->action == true) {
+                $this->notificationService->checkExistAndPush(
+                    "Thành viên {$request->user()->full_name} vừa theo dõi bạn.",
+                    "Hãy cập nhật bài viết ngay để mọi người dễ dàng tìm thấy.",
+                    $request->follower_receive_id,
+                    '/provider/hostel-regist'
+                );
+            }
 
             return $this->responseDataSuccess($result);
         }
